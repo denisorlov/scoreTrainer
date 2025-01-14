@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>♫Music Score Trainer♫</title>
+    <script src="./js/abcjs-basic-min.js"></script>
+    <script src="./js/diffLib.js"></script>
+    <script src="./js/main.js"></script>
+    <link rel="stylesheet" href="./css/abcjs-audio.css"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            margin: 0;
+            background-color: darkslategray;
+            color: lightgray;
+        }
+        .highlight {
+            fill: #0a9ecc;
+        }
+        .highlight-wrong {
+            fill: orange;
+        }
+        .abcjs-cursor {
+            stroke: red;
+        }
+        .unselected-notes {
+            opacity: 0.3;
+        }
+        #warnings {
+            color: #dd0000;
+            padding: 5px 0;
+        }
+        #tempoWarp {
+            display: inline-block;
+            width: 2.5em;
+            text-align: center;
+        }
+        #fixedDivTop *:not(#audio *) {
+            color: darkslategray;
+        }
+        #fixedDivTop *:not(.font_size_initial *):not(#audio *) {
+            font-size: 1.5em;
+        }
+        #fixedDivBottom *:not(.font_size_initial *) {
+            font-size: 1.5em;
+        }
+        #mouseWheelNote:hover{
+            color: chocolate;
+        }
+        .font_size_initial * {
+            font-size: initial;
+        }
+        #audio * {
+            font-size: initial;
+        }
+        input[type=checkbox] {
+            width: 1em;
+            height: 1em;
+        }
+    </style>
+</head>
+<body>
+<div id="upPad" style="height: 7em;visibility: hidden;">
+    <label>Start Note Time: <input type="number" id="startNoteTime" value="-1"></label>
+    <label>End Note Time: <input type="number" id="endNoteTime" value="-1"></label>
+</div>
+
+<div id="paper"></div>
+<div id="fixedDivTop" style="position: fixed;top: 0;background-color: #e9e9e9;right: 0;left: 0;padding-left: 5px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
+    <span id="toolPanel" style="_display: flex;">
+        <!--button id="playButton" title="play/pause">&#9199;</button-->
+    <select id="selectAbc" style="width: 200px;_font-size: initial;_height: 3em;">
+        <option value="" style="color: gray">&#127900;&#127901;...</option>
+    </select>
+    <button id="slowerButton" title="Медленнее">&#9196;</button>
+    <span id="tempoWarp" style="padding-top: 0.2em;cursor: pointer;" title="Toggle half/whole"></span>
+    <button id="fasterButton" title="Быстрее">&#9195;</button><!---->
+    <button id="buildPlayerButton" title="Построить">&#128195;</button><!-- @TODO to remove -->
+    <button id="buildEditorButton" title="Редактировать">&#128221;</button>
+    <button id="noteOnViewButton" title="Ноты миди" onclick="utils.toggle('#noteOnView');noteOnView.style.top='150px';noteOnView.style.left='0'">&#127896;</button><!-- https://symbolonly.com/office-symbol.html -->
+    <button id="settingButton" onclick="utils.toggle('#settingPanel');utils.toggle('#settingPanel2');">&#9881;</button>
+    <select id="selectLang" style="width: 2em;"></select>
+        </span>
+    <div id="settingPanel" style="display: none; background-color: #9f9f9f;">
+        W: <input type="number" min="400" step="100" id="staffWidth" value="900" title="Width: Ширина в px" style="width: 2.5em">
+        L: <input type="number" min="0" step="50" id="paddingLeft" value="50" title="Left: Слева в px" style="width: 2.5em">
+        R: <input type="number" min="0" step="50" id="paddingRight" value="20" title="Right: Справа в px" style="width: 2.5em">
+        RM: <input type="checkbox" id="staffWidthResize" title="Resize Mode: Ширина на всю страницу" checked="checked">
+        S: <input type="number" id="staffScale" value="1" title="Scale: Масштаб, игнорируется если ширина на всю страницу" style="width: 2em">
+        ML: <input type="number" id="preferredMeasuresPerLine" value="6" title="Measures per Line: Предпочтительное кол-во тактов в строке" style="width: 1.5em">
+        &nbsp;
+        UM: <input type="checkbox" id="metronomeUse" title="Use Metronome: Использовать метроном">
+        OM: <input type="checkbox" id="metronomeOnlyUse" title="Only Metronome: Использовать только метроном">
+        <!--input title="Использовать затакт" type="checkbox" id="extraMeasure"-->
+        MT: <input type="text" id="metronomeText" title="Metronome Text: Строка метронома в формате %%MIDI drum" style="width: 8em;">
+        <span id="changeInfo" style="display: none; cursor: help">&#9998;</span><!-- @TODO for remove -->
+    </div>
+    <div id="settingPanel2" style="display: none;">
+        AS: <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
+        ST: <input type="number" min="100" step="30" id="scrollTopThreshold" value="130" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
+        SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="400" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">
+        <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');utils.toggle('#scrollBotThresholdLine');">::</button>
+    </div>
+    <div id="audio" style="display: none_;"></div>
+    <div class="font_size_initial">
+        <div id="swMesure" style="background-color: green; border: 1px solid green;box-sizing: border-box;position: relative;display: inline-block;width: 50%;" title="">
+            <div id="swmIndicator" style="background-color: orange; text-align: center; color: white; width: 0%">&nbsp;</div>
+        </div>
+        <button id="toStartButton" title="В начало...">&#9664;</button>
+        <input type="number" id="maxWrongNotes" value="0" title="Максимум неверных нот" style="width: 2em">
+        <input type="number" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 1.5em">
+        &#127929;:<span id="voicesCheckControlPanel" title="Выбрать часть голосов для контроля">...</span>&#127900;
+        <!--button id="resetErrButton" title="" style="font-size: initial">&#9881;</button-->
+    </div>
+</div><!-- fixedDivTop -->
+<button id="fixedDivTopHideButton" style="position: fixed;top: 0;right: 0;" title="Спрятать/показать панель" onclick="utils.toggle('#fixedDivTop');">_</button>
+
+<div id="scrollTopThresholdLine" style="width:100%;border-top: medium dashed red;position: fixed;display: none;"></div>
+<div id="scrollBotThresholdLine" style="width:100%;border-top: medium dashed red;position: fixed;display: none;"></div>
+
+<!--pre class="clicked-info"></pre>
+<pre class="onEvent"></pre>
+<pre class="onBeat"></pre-->
+
+<div id="downPad" style="height: 300px"></div>
+<div id="fixedDivBottom" style="color: darkslategray;position: fixed;bottom: 0;background-color: #e9e9e9;right: 0;left: 0;padding: 1px;display: none;border-top-left-radius: 5px;border-top-right-radius: 5px;">
+    <div id="warnings" style="max-height: 200px;overflow: scroll;"></div>
+    <div id="editorTools" class="font_size_initial">
+        <button id="undoButton" disabled>&#8630;</button>
+        <button id="redoButton" disabled>&#8631;</button>
+        <span id="mouseWheelNote">&#128432;MouseWheel</span>
+        <!--input type="checkbox" id="allowDragging"><button id="downNote">&#8600;</button><button id="upNote">&#8599;</button-->
+        <span id="noteButtons"></span>
+        <button id="downloadMidi">&#128190; MIDI</button><a id="midi-download" download="example.mid"></a>
+    </div>
+    <textarea id="abcText" _cols="80" rows="10" spellcheck="false" style="width: 98%">X:1
+T:Title
+C:Composer
+Q:1/4=132 "Allegretto"
+M:2/4
+L:1/4
+K:G
+%%score { (1) | (4) }
+V:1 clef=treble nm="Piano"
+V:4 clef=bass
+V:1
+z C|c2|]
+V:4
+C,2|z2|]
+    </textarea>
+    <!-- https://editor.drawthedots.com/  -->
+    <!--button onclick="setAbcText(getAbcText().replaceAll(/{[^} ]+}/g, ''))" id="removeVorschlags" title="Убрать форшлаги" style="font-size: 1em">Убрать форшлаги</button>
+    <button onclick="setAbcText(loadedAbcText);" id="repareAbcText" title="Восстановить" style="font-size: 1em">Восстановить</button-->
+</div>
+
+<div id="noteOnView" style="position: fixed; top: 150px;left: 0;border: lightgray solid 2px;border-radius: 10px;font-size: initial;background-color: darkslategray;cursor: move;">
+    &nbsp;&nbsp;
+    <button id="noteOnViewLeft" style="display: none" title="Влево" onclick="this.parentNode.style.left='0px';this.parentNode.style.right='initial'">⮘</button>
+    <button id="noteOnViewRight" style="display: none" title="Вправо" onclick="this.parentNode.style.right='0px';this.parentNode.style.left='initial'">⮚</button>
+    <button id="noteOnViewSize" title="Размер" onclick="noteView.abcOptions = noteView.abcOptions.scale==2 ? { scale: 3, staffwidth: 200}:{ scale: 2, staffwidth: 150}; noteView.renderPlayedNote()">🔍</button>
+    <button id="noteOnViewClear" title="Очистить" onclick="noteView.clear()">🧹</button>
+    <button id="noteOnViewClose" title="Закрыть" style="color: red;font-weight: bold" onclick="this.parentNode.style.display='none'">x</button><!-- ❌ -->
+    <div id="viewPaper"></div>
+</div>
+<!-- statusPanel -->
+<div class="hidden">
+    <style>
+        #statusPanel{
+            border: dashed 1px green;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            font-size: 1.5em;
+            max-width: 100%;
+            padding: 0.1em;
+            background-color: aliceblue;
+            border-radius: 0.2em;
+            color: initial;
+        }
+    </style>
+    <div id="statusPanel"></div><!-- function showStatus(str, dur) -->
+</div>
+<!-- statusPanel -->
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+T: Eine kleine Nachtmusik (fragment)
+C: Wolfgang Amadeus Mozart
+M: C
+L: 1/16
+%%staves {(RH) (LH)}
+V:RH clef=treble
+V:LH clef=bass
+Q:1/4=120 "Allegro"
+K:G
+V: RH
+[GBdg]4 z2 .d2 .[Gg]4 z2.d2|.[Gg]2!1!.d2.g2.b2.[dd']4 z4|.[cc']4 z2 .a2.[cc']4 z2 .a2|.[cc']2.a2.f2.a2 d4 z4|.[bdg]2 z2 g6 (b2a2).g2|
+ V: LH
+[G,D]4 z2 D,2 G,4 z2 D,2|G,2D,2G,2B,2 D4 z4|C4 z2 A,2C4 z2 A,2|C2A,2F,2A,2 [D,D]4 z4|G,DB,D G,DB,D G,DB,D G,DB,D|
+V: RH
+Tg2f2 f6 (a2c'2).f2|(a2g2) g6 (b2a2).g2|Tg2f2 f6 (a2c'2).f2|
+V: LH
+G,DCD G,DCD G,DCD G,DCD|G,DB,D G,DB,D G,DB,D G,DB,D|G,DCD G,DCD G,DCD G,DCD|
+V: RH
+.g2.g2 ([gc]fef) .[gd]2.g2 ([bd]aga)|.[db]2.b2 ([d'd]c'bc') [dd']4 z4|([Bd]8 [ce]8)|[Ad]2c2 [Ac]4 [cG]2B2 [BG]4|[BE]2A2 [EA]4 ([CG]2F2).E2.F2|
+V: LH
+G,DB,D A,DCD B,DB,D (F,CB,A,)|G,DB,D !5!A,!2!F!3!DF [B,G]4 z4|z16|([D,F,]8[E,G,]8)|[C,C]4 [C,C]4 [D,A,]4 [D,A,]4|
+V: RH
+.[DG]2 z2 .[DFA]2 z2 .[DGB]2 z2z4|[Bd]8 [ce]8|([Bd]2[Ac]2).[Ac]2.[Ac]2 ([Ac]2[GB]2).[GB]2.[GB]2|([EB]2A2).[EA2]2.[EA2]2 (G2F2E2F2)|(G8 G2)(TGF/G/ A2F2)|
+V: LH
+B,,2 z2 D,2 z2 G,2 z2 z4|z16|([D,F,]8[E,G,]8)|[C,C]4 C2C2 [D,A,C]4 [D,A,]2[D,A,]2|[G,B,]2G,2G,2G,2 G,2!2![G,B,]2[A,C]2[G,A,]2|
+V: RH
+([GB]8 [GB]2)(TB!2!A/B/ !4![Ac]2[FA]2)|dBdB dBdB ecec fcfc|gBgB adad bdbd ^c'g^c'g|
+V: LH
+G,,2G,2G,2G,2 G,2G,2G,2G,2|G,,2G,2G,2G,2 G,2G,2G,2G,2|G,,2G,2F,,2F,2 G,,2G,2E,,2E,2|
+V: RH
+[fd']6 a2 ([g^c']3a)([g^c']3a)|[fd']6 a2 ([g^c']3a)([g^c']3a)|[fd']2 [fd']4 [fd']4 [fd']4 ([fd']2|
+V: LH
+D,A,DA, D,A,DA, D,A,EA, D,A,EA,|D,A,DA, D,A,DA, D,A,EA, D,A,EA,|D,2E,2F,2E,2 D,2E,2F,2E,2|
+V: RH
+[ed']2) [ed']4 [ed']4 [ed']4 [ed']2|[e^c']2a2[fd']2a2 [e^c']2a2[fd']2a2|[e^c']2A2A2A2 A4 z4|]
+V: LH
+G,2A,2B,2A,2 G,2A,2B,2^G,2|A,^CEC A,DFD A,CEC A,DFD|A,2[A,,A,]2[A,,A,]2[A,,A,]2 [A,,A,]4 z4|]
