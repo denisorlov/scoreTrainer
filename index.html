@@ -72,8 +72,10 @@
 <div id="fixedDivTop" style="position: fixed;top: 0;background-color: #e9e9e9;right: 0;left: 0;padding-left: 5px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
     <span id="toolPanel" style="_display: flex;">
         <!--button id="playButton" title="play/pause">&#9199;</button-->
-    <select id="selectAbc" style="width: 200px;_font-size: initial;_height: 3em;">
+    <select id="selectAbc" style="width: 200px;font-size: 1em;">
         <option value="" style="color: gray">&#127900;&#127901;...</option>
+    </select><select id="selectGroupAbc" style="width: 2em;font-size: 1em;">
+        <option value="" style="color: gray">&#127898;</option>
     </select>
     <button id="slowerButton" title="Медленнее">&#9196;</button>
     <span id="tempoWarp" style="padding-top: 0.2em;cursor: pointer;" title="Toggle half/whole"></span>
@@ -82,7 +84,7 @@
     <button id="buildEditorButton" title="Редактировать">&#128221;</button>
     <button id="noteOnViewButton" title="Ноты миди" onclick="utils.toggle('#noteOnView');noteOnView.style.top='150px';noteOnView.style.left='0'">&#127896;</button><!-- https://symbolonly.com/office-symbol.html -->
     <button id="settingButton" onclick="utils.toggle('#settingPanel');utils.toggle('#settingPanel2');">&#9881;</button>
-    <select id="selectLang" style="width: 2em;"></select>
+    <select id="selectLang" style="width: 2em;font-size: 1em;"></select>
         </span>
     <div id="settingPanel" style="display: none; background-color: #9f9f9f;">
         W: <input type="number" min="400" step="100" id="staffWidth" value="900" title="Width: Ширина в px" style="width: 2.5em">
@@ -100,9 +102,9 @@
     </div>
     <div id="settingPanel2" style="display: none;">
         AS: <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
-        ST: <input type="number" min="100" step="30" id="scrollTopThreshold" value="130" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
-        SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="400" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">
-        <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');utils.toggle('#scrollBotThresholdLine');">::</button>
+        ST: <input type="number" min="100" step="30" id="scrollTopThreshold" value="220" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
+        <!--SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="400" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">-->
+        <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');/*utils.toggle('#scrollBotThresholdLine')*/;">--</button>
     </div>
     <div id="audio" style="display: none_;"></div>
     <div class="font_size_initial">
@@ -110,8 +112,8 @@
             <div id="swmIndicator" style="background-color: orange; text-align: center; color: white; width: 0%">&nbsp;</div>
         </div>
         <button id="toStartButton" title="В начало...">&#9664;</button>
-        <input type="number" id="maxWrongNotes" value="0" title="Максимум неверных нот" style="width: 2em">
-        <input type="number" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 1.5em">
+        <input type="number" step="5" min="0" id="maxWrongNotes" value="0" title="Максимум неверных нот" style="width: 2.5em">
+        <input type="number" step="5" min="0" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 1.5em">
         &#127929;:<span id="voicesCheckControlPanel" title="Выбрать часть голосов для контроля">...</span>&#127900;
         <!--button id="resetErrButton" title="" style="font-size: initial">&#9881;</button-->
     </div>
@@ -119,22 +121,25 @@
 <button id="fixedDivTopHideButton" style="position: fixed;top: 0;right: 0;" title="Спрятать/показать панель" onclick="utils.toggle('#fixedDivTop');">_</button>
 
 <div id="scrollTopThresholdLine" style="width:100%;border-top: medium dashed red;position: fixed;display: none;"></div>
-<div id="scrollBotThresholdLine" style="width:100%;border-top: medium dashed red;position: fixed;display: none;"></div>
+<!--div id="scrollBotThresholdLine" style="width:100%;border-top: medium dashed red;position: fixed;display: none;"></div-->
 
 <!--pre class="clicked-info"></pre>
 <pre class="onEvent"></pre>
 <pre class="onBeat"></pre-->
 
-<div id="downPad" style="height: 300px"></div>
+<div id="downPad" style="height: 500px"></div>
 <div id="fixedDivBottom" style="color: darkslategray;position: fixed;bottom: 0;background-color: #e9e9e9;right: 0;left: 0;padding: 1px;display: none;border-top-left-radius: 5px;border-top-right-radius: 5px;">
     <div id="warnings" style="max-height: 200px;overflow: scroll;"></div>
     <div id="editorTools" class="font_size_initial">
-        <button id="undoButton" disabled>&#8630;</button>
-        <button id="redoButton" disabled>&#8631;</button>
+        <button id="undoButton" disabled title="Undo">&#8630;</button><button id="redoButton" disabled title="Redo">&#8631;</button>
         <span id="mouseWheelNote">&#128432;MouseWheel</span>
         <!--input type="checkbox" id="allowDragging"><button id="downNote">&#8600;</button><button id="upNote">&#8599;</button-->
         <span id="noteButtons"></span>
+        <input type="text" id="replaceFrom" style="width: 3em"><input type="text" id="replaceTo" style="width: 3em"><input type="button" id="replaceButton" title="Replace" value="&#128471;">
         <button id="downloadMidi">&#128190; MIDI</button><a id="midi-download" download="example.mid"></a>
+        <button id="saveToFileBut">&#128190;</button>
+        <button id="fontSmallerButton" title="Font smaller">&#128475;</button><button id="fontBiggerButton" title="Font bigger">&#128474;</button>
+        <button id="fixedDivBottomClose" title="Закрыть" style="color: red;font-weight: bold; position: fixed;right: 0;" onclick="this.parentNode.parentNode.style.display='none'">x</button>
     </div>
     <textarea id="abcText" _cols="80" rows="10" spellcheck="false" style="width: 98%">X:1
 T:Title

@@ -5,8 +5,9 @@
  * настройки отображения к нотам
  * ограничитель буфера undo redo
  * undo redo lib: https://www.cssscript.com/undo-redo-history/, https://github.com/kpdecker/jsdiff/blob/master/src/diff/base.js, https://stackoverflow.com/a/79310421/2223787
- * глобальная замена в редакторе
  * индикация МИДИ
+ * редактор: инфо по горячи клавишам
+ * abcjsHelper.getVisualObj().makeVoicesArray()
  *
  * замены: %\d+\r\n, $,
  * убрать форшлаги {[^} ]+}
@@ -66,7 +67,7 @@ function setAbcjsHelper(){
     abcjsHelper.cursorOptions = {
         onEvent: (ev: CursorEvent)=>{
             if(abcjsHelper.getSynthControl().isStarted){// ev.measureStart &&
-                scrollScore(ev);
+                scrollToBeatLineTop(ev.measureNumber)
             }
 
             currNoteTime = ev.milliseconds;// global
@@ -90,6 +91,7 @@ function prepareMetronomeText(renderObj:IVisualObj){
     utils.elemType('metronomeText', HTMLInputElement).value = drumBeats[mf.num+'/'+mf.den] || '';
 }
 function prepareVoicesCheckControl(visualObj:IVisualObj){
+    midiHandler.checkVoices=[]; // reset
     let span = utils.elem('voicesCheckControlPanel');
     span.innerHTML = '';
     visualObj.makeVoicesArray().forEach((it, ind, all)=>{
@@ -123,8 +125,11 @@ function buildSheetMusicPlayer(){
     let visualObj = abcjsHelper.renderSheetMusic(paperElemId, getAbcText());
     abcjsHelper.createSynth(paperElemId, audioElemId, visualObj, ()=>{
         midiHandler.initSteps(abcjsHelper.getVisualObj());
+        initBeatLines(abcjsHelper.getVisualObj());
     });
     utils.elem('fixedDivBottom').style.display = 'none';
+    // @ts-ignore
+    //abcjsHelper.getSynthControl().restart();
     resetIndicator();
     setChanged(false);
 }
@@ -137,6 +142,9 @@ function buildSheetMusicEditor(){
 
     abcjsHelper.renderEditor(paperElemId,audioElemId,abcTextElemId, {warnings_id:'warnings'});
     midiHandler.initSteps(abcjsHelper.getVisualObj());
+    initBeatLines(abcjsHelper.getVisualObj());
+    // @ts-ignore
+    //abcjsHelper.getSynthControl().restart();  // preplay
     //utils.elem('fixedDivBottom').style.display = 'block';
     resetIndicator();
     setChanged(false);
@@ -196,6 +204,12 @@ function clickListener(abcElem, tuneNumber, classes, analysis, drag, mouseEvent)
         gracenotes: abcElem.gracenotes,
         midiGraceNotePitches: abcElem.midiGraceNotePitches
     });
+    let clicked = '';
+    abcElem.midiPitches.forEach(mp=>{
+        let pn = (pitchNames[mp.pitch] as pitchName);
+        clicked+=pn.note+' ('+pn.oct+') ';
+    })
+    if(clicked.length) showStatus(clicked);
 
     let lastClicked = abcElem.midiPitches;
     if (!lastClicked) return;
@@ -311,36 +325,58 @@ function unselectNotes(visualObj: IVisualObj, startNoteTime, endNoteTime){
 /** Прокрутка нот */
 // global
 let autoScroll = true, // отключать авто-прокрутку
+    beatLines = {},// карта тактов и линий с самым высоким элементом для расчета прокрутки see initBeatLines
     scrollTopThreshold, scrollBotThreshold;
-function scrollScore(ev: CursorEvent){
-    if(!autoScroll) return;
-    let svgElem = ev.elements[0][0] as SVGElement;
-    if(svgElem) scrollForElementRect(svgElem);
+function initBeatLines(visualObj: IVisualObj){
+    beatLines = {};
+    let lines={};
+    visualObj.makeVoicesArray().forEach(arr=>{
+        arr.forEach(obj=>{
+            if(!obj.elem.elemset || obj.elem.elemset.length<1) return;
+            lines[obj.line] = lines[obj.line] || {line: obj.line, top_elem:null, top:null};
+            let bRect = obj.elem.elemset[0].getBoundingClientRect();
+            if(lines[obj.line].top==null || bRect.top<lines[obj.line].top){
+                lines[obj.line].top = parseInt(bRect.top);
+                lines[obj.line].top_elem = obj.elem.elemset[0];
+            }
+            beatLines[obj.measureNumber] = lines[obj.line];
+        })
+    });
 }
-function scrollForElementRect(element: Element){
+function scrollToBeatLineTop(measureNumber: number){
     if(!autoScroll) return;
-    let bcRect = element.getBoundingClientRect();
-    scrollForBottom(bcRect.bottom);
-    scrollForTop(bcRect.top);
-}
-function scrollForTop(top: number){
-    if(!autoScroll) return;
-    let st  = scrollTopThreshold;
 
-    if(top<st){
+    let st  = scrollTopThreshold,
+        top = beatLines[measureNumber].top_elem.getBoundingClientRect().top;
+    if(top!==st){
         let scrlLen = top-st;
-        window.scrollBy({ top: scrlLen, left: 0, behavior: 'smooth' })
+        window.scrollBy({ top: scrlLen, left: 0, behavior: (Math.abs(scrlLen)<500 ? 'smooth' : 'auto') })
     }
 }
-function scrollForBottom(bottom: number){
-    if(!autoScroll) return;
-    let sb  = scrollBotThreshold;
 
-    if(bottom>document.documentElement.clientHeight-sb){
-        let scrlLen = bottom-document.documentElement.clientHeight+sb;
-        window.scrollBy({ top: scrlLen, left: 0, behavior: 'smooth' });
-    }
-}
+// function scrollForElementRect(element: Element){
+//     if(!autoScroll) return;
+//     let bcRect = element.getBoundingClientRect();
+//     scrollForTopBottom(bcRect.top, bcRect.bottom);
+//     //scrollForBottom(bcRect.bottom);
+//     //scrollForTop(bcRect.top);
+// }
+//
+// function scrollForTopBottom(top: number, bottom: number){
+//     if(!autoScroll) return;
+//     let st  = scrollTopThreshold, sb  = scrollBotThreshold,
+//         half = (sb-st)/2, // середина диапазона скролла
+//         scrlTopLen = top<st ? top-st-50 : 0, // задвигаем вниз с запасом 50px
+//         // проверяем условием просадки верха ниже середины и с запасом по низу, т.к. внизу обычно есть запас
+//         scrlBotLen = top<st+half || bottom<sb+60 ? 0 : bottom-sb,
+//         scrlLen = scrlBotLen+scrlTopLen
+//     ;
+//     if (top>st+half && bottom>sb+60)
+//         console.log(top, bottom, scrollTopThreshold, scrollBotThreshold, scrlTopLen, scrlBotLen);
+//     if(scrlLen!=0){
+//         window.scrollBy({ top: scrlLen, left: 0, behavior: 'smooth' })
+//     }
+// }
 
 function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     let drumStr  = (utils.elemType('metronomeText', HTMLInputElement).value || '').trim(),
@@ -355,6 +391,21 @@ function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     }
 }
 
+/** утилитарная функция - отсечение последнего такта по все голосам, для поиска проблем в abc нотации */
+function cutEndMeasure(){
+    let abcTextArea = elemType('abcTextArea', HTMLTextAreaElement),
+        stringArr = abcTextArea.value.split('\n');
+    stringArr.forEach((str, ind, arr)=>{
+        let matches = [...str.matchAll(/\|/g)];
+        if(matches.length>1){
+            arr[ind] = str.substring(0, matches[matches.length-2].index+1);
+            console.log(matches.length-2);
+        }
+    })
+    abcTextArea.value = stringArr.join('\n');
+    abcTextArea.dispatchEvent(new Event('change'));
+}
+
 function showStatus(str, dur?:number){
     dur = dur || 4000;
     let el = document.getElementById('statusPanel')!;
@@ -363,4 +414,5 @@ function showStatus(str, dur?:number){
         return ()=>{ _el.innerHTML ==_str ? _el.innerHTML = '': 0;}
     }(el, str)), dur);
 }
+
 

@@ -36,6 +36,34 @@ const utils = {
         };
     },
 
+    // https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
+    textFileHref: '',
+    makeSaveTextFileHref: function (text: string, contentType?: string) {
+        let data = new Blob([text], {type: contentType || 'text/plain'});
+
+        // If we are replacing a previously generated file we need to
+        // manually revoke the object URL to avoid memory leaks.
+        if (utils.textFileHref !== '') {
+            window.URL.revokeObjectURL(utils.textFileHref);
+        }
+
+        utils.textFileHref = window.URL.createObjectURL(data);
+
+        return utils.textFileHref;
+    },
+    initSaveTextFile: function (text: string, contentType?: string, defaultFileName?: string) {
+        let link = document.createElement('a');
+        link.setAttribute('download', defaultFileName || 'saved.txt');
+        link.href = utils.makeSaveTextFileHref(text, contentType);
+        document.body.appendChild(link);
+
+        // wait for the link to be added to the document
+        window.requestAnimationFrame(function () {
+            link.dispatchEvent(new MouseEvent('click'));
+            document.body.removeChild(link);
+        });
+    },
+
     /**
      * https://stackoverflow.com/a/55111246/2223787
      * @param textarea

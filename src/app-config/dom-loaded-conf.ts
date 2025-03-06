@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event): void => {
 
     utils.addListener('change', '#abcText', (ev)=>{
         let diff: WordDiff[] = wordDiff.diff(undoBuffer1, (ev.currentTarget as HTMLTextAreaElement).value);
-        if(diff.length>0){ // если есть изменения
+        if(diffUtils.isDiff(diff)){ // если есть изменения
             editHash.push(diffUtils.wordDiffToMin(diff));// положили разницу в буфер
             console.info('editHash.array.length=', editHash.array.length);
             undoBuffer1 = (ev.currentTarget as HTMLTextAreaElement).value;
@@ -65,7 +65,8 @@ function setButtons(){
 }
 
 function setSelectAbcText(){
-    abcLibUtils.initSelect(utils.elemType('selectAbc', HTMLSelectElement), (ev)=>{
+    //abcLibUtils.initSelect
+    abcLibUtils.initGroupSelect(utils.elemType('selectAbc', HTMLSelectElement), (ev)=>{
         let value = (ev.target as HTMLSelectElement).value;
         if(!value) return;
         (ev.target as HTMLSelectElement).title = value;
@@ -77,7 +78,7 @@ function setSelectAbcText(){
                 editHash.resetArray();editHash.push([]); handleUndoRedoButtons();
                 buildSheetMusicEditor();//buildSheetMusicPlayer();
             });
-    });
+    }, utils.elemType('selectGroupAbc', HTMLSelectElement));
 }
 
 function handleUndoRedoButtons(){
@@ -116,27 +117,28 @@ function setTempoButtons(){
 
 function setScrollLines(){
     let stEl = utils.elemType('scrollTopThreshold', HTMLInputElement),
-        sbEl = utils.elemType('scrollBotThreshold', HTMLInputElement),
-        topLine  = utils.elem('scrollTopThresholdLine'),
-        botLine  = utils.elem('scrollBotThresholdLine');
+        //sbEl = utils.elemType('scrollBotThreshold', HTMLInputElement),
+        topLine  = utils.elem('scrollTopThresholdLine')
+        //botLine  = utils.elem('scrollBotThresholdLine')
+    ;
 
     utils.addListener("change", "#scrollTopThreshold", (ev)=>{
-        scrollTopThreshold = (ev.currentTarget as HTMLInputElement).value; // global
+        scrollTopThreshold = parseInt((ev.currentTarget as HTMLInputElement).value); // global
         topLine.style.top = scrollTopThreshold +'px';
     });
-    utils.addListener("change", "#scrollBotThreshold", (ev)=>{
-        scrollBotThreshold = (document.documentElement.clientHeight - parseInt((ev.currentTarget as HTMLInputElement).value)); // global
-        botLine.style.top = scrollBotThreshold +'px';
-    });
+    // utils.addListener("change", "#scrollBotThreshold", (ev)=>{
+    //     scrollBotThreshold = document.documentElement.clientHeight - parseInt((ev.currentTarget as HTMLInputElement).value); // global
+    //     botLine.style.top = scrollBotThreshold +'px';
+    // });
     utils.addListener("change", "#autoScroll", (ev)=>{
         autoScroll = (ev.currentTarget as HTMLInputElement).checked; // global
-        stEl.disabled = sbEl.disabled = !autoScroll;
-        topLine.style.opacity = botLine.style.opacity = (autoScroll ? 1 : 0.3)+'';
+        stEl.disabled = !autoScroll;//= sbEl.disabled
+        topLine.style.opacity  = (autoScroll ? 1 : 0.3)+'';//= botLine.style.opacity
     });
 
     let event = new Event('change');
     stEl.dispatchEvent(event);
-    sbEl.dispatchEvent(event);
+    //sbEl.dispatchEvent(event);
 }
 
 function createEditorButtons() {
@@ -160,6 +162,13 @@ function createEditorButtons() {
         })
         htmlElement.appendChild(but);
     })
+    utils.addListener('click', '#replaceButton', ()=>{
+        let replaceFromVal = utils.elemType('replaceFrom', HTMLInputElement).value;
+        if(replaceFromVal.length>0){
+            abcTextArea.value = abcTextArea.value.replace(new RegExp(replaceFromVal,'g'), utils.elemType('replaceTo', HTMLInputElement).value);
+            abcTextArea.dispatchEvent(new Event('change'));
+        }
+    });
 
     utils.addListener('click', '#undoButton', ()=>{
         if(editHash.hasPrevious()){
@@ -194,13 +203,33 @@ function createEditorButtons() {
     utils.addListener('click', '#downloadMidi', ()=>{
         AbcJsUtils.downloadMidi(getAbcText(), utils.elemType('midi-download', HTMLAnchorElement))
     });
-    utils.addListener('wheel', '#mouseWheelNote', (e) =>{
-        const delta = Math.sign((e as WheelEvent).deltaY);
-        dragNoteBySelection(abcTextArea, delta);
-        abcTextArea.focus();
-        e.preventDefault(); // !
+    utils.addListener('click', '#saveToFileBut', (e)=>{
+        utils.initSaveTextFile(getAbcText(), 'application/octet-stream', 'saved');
     });
 
+    utils.addListener('wheel', '#mouseWheelNote', (e) =>{
+        const delta = Math.sign((e as WheelEvent).deltaY);
+        moveNote(delta, e);
+    });
+    abcTextArea.addEventListener('keydown', (event: KeyboardEvent)=> {
+        if ((event.code == 'ArrowUp' || event.code == 'ArrowDown') && (event.ctrlKey || event.metaKey)) {
+            moveNote(event.code == 'ArrowUp' ? -1 : 1, event);
+        }
+    });
+    function moveNote(delta: number, event: Event){
+        dragNoteBySelection(abcTextArea, delta);
+        abcTextArea.focus();
+        event.preventDefault(); // !
+    }
+
+
+    abcTextArea.style.fontSize = '1.5em';
+    utils.addListener('click', '#fontSmallerButton', ()=>{
+        abcTextArea.style.fontSize = parseFloat(abcTextArea.style.fontSize)-0.5+'em';
+    });
+    utils.addListener('click', '#fontBiggerButton', ()=>{
+        abcTextArea.style.fontSize = parseFloat(abcTextArea.style.fontSize)+0.5+'em';
+    });
 }
 
 function setKeydown(){
@@ -286,13 +315,11 @@ function resetIndicator(){setIndicator("swmIndicator", 0, '&nbsp;')}
 
 function scrollByMidiHandlerSteps(){
     let currentIndex = midiHandler.getCurrentIndex(),
-        nextIndex = midiHandler.getNextIndex(),
-        index = nextIndex>currentIndex ? nextIndex : currentIndex,
-        topBtm = midiHandler.getStepTopBottom(index);
+         nextIndex = midiHandler.getNextIndex(),
+         index = nextIndex<currentIndex ? nextIndex : currentIndex // to begin or continue
+    ;
 
-    scrollForBottom(topBtm.bottom); // сперва низ
-    topBtm = midiHandler.getStepTopBottom(index);
-    scrollForTop(topBtm.top); // затем проверем верх, т.к. внизу обычно есть запас
+    scrollToBeatLineTop(midiHandler.getStep(index).measureNumber)
 }
 function settingToStart(){
     removeClassFromPaper(paperElemId, highlightClassName);
@@ -303,7 +330,7 @@ function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to 
     let note = pitchNames[pitch];
     showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+note.note+' (окт: '+note.oct+')</span>');
     //-------------------
-    let min = 1000, elemForHighlightWrongCls: Elem,
+    let min = 1000, elemForHighlightWrongCls: Elem|null = null,
         step: TimeStep = midiHandler.getStep(midiHandler.getCurrentIndex());
     step.elems.forEach(elem=>{
         elem.abcelem.midiPitches.forEach(mp=>{
@@ -314,9 +341,10 @@ function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to 
             }
         })
     })
-    elemForHighlightWrongCls!.elemset.forEach(element=>{ // красим элемент
-        element.classList.add(HighlightWrongCls);
-    })
+    if(elemForHighlightWrongCls!=null)
+        (elemForHighlightWrongCls as Elem).elemset.forEach(element=>{ // красим элемент
+            element.classList.add(HighlightWrongCls);
+        })
     setTimeout( ()=>{removeClassFromPaper(paperElemId, HighlightWrongCls)}, durationMs || 1000);
 }
 //////// played notes

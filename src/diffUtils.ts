@@ -17,6 +17,9 @@ interface MinDiff {
     v: string
 }
 const diffUtils = {
+    isDiff: function(wordDiff: WordDiff[]): boolean {
+        return wordDiff.some(it=>it.added || it.removed);
+    },
     wordDiffToMin: function(wordDiff: WordDiff[]): MinDiff[] {
         let res: MinDiff[]  = [],
             currPos = 0;

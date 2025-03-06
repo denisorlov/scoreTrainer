@@ -47,18 +47,16 @@ class AbcMidiHandler implements IMidiHandler{
         visualObj.makeVoicesArray().forEach(arr=>{
             arr.forEach(obj=>{
                 let elem: Elem = obj.elem;
-                if(elem.type=="note"){
+                if(elem.type=="note" && elem.abcelem.midiPitches.length>0){ // бывают ноты без midiPitches
                     let time = Array.isArray(elem.abcelem.currentTrackMilliseconds) ? elem.abcelem.currentTrackMilliseconds[0]:elem.abcelem.currentTrackMilliseconds;
-                    let arr = preObj[time] || [];
-                    arr.push(elem);
-                    preObj[time] = arr;
+                    preObj[time] = preObj[time] || {measureNumber: obj.measureNumber, elems:[]};
+                    preObj[time].elems.push(elem);
                 }
             })
         });
         let resArr: TimeStep[] = [];
         for(let i in preObj){
-            let elems: Elem[] = preObj[i];
-            resArr.push(new TimeStep(Number(i), elems));
+            resArr.push(new TimeStep(Number(i), preObj[i].elems, preObj[i].measureNumber));
         }
         resArr.sort((a,b)=>{
             return a.time-b.time;
@@ -324,5 +322,5 @@ class AbcMidiHandler implements IMidiHandler{
     }
 }
 class TimeStep {
-    constructor(public time:number, public elems:Elem[]) {}
+    constructor(public time:number, public elems:Elem[], public measureNumber:number) {}
 }
