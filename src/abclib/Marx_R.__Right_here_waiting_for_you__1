@@ -1,0 +1,28 @@
+X:1
+T:Right here waiting for you
+C:Richard Marx
+%%measurenb 0
+Q:1/4=100
+M:4/4
+L:1/8
+K:C
+%%score { (1) | (4) }
+V:1 clef=treble nm="Piano"
+V:4 clef=bass
+V:1
+z2z g gfed-|d3 d defe-|e3 c cd-de-|ed-dc- cBAG-|G3 g gfed-|d3 d defe-|e3c cd-de-|ed-dc- cB-Bc-|c3[B,CE]- [B,CE]4-|[B,CE]3 [B,CE]- [B,CE]4|
+V:4
+CGc6|G,DG6|A,EA6|F,CFC F,2G,2|C,G,EG, DG,CG,|G,DGD g,4|A,E A6|F,CFE G,D-D2|A,,E,A,4- A,E,|A,,E, A,6|
+V:1
+[G,E,]4- [G,E,]G,CD-|DE-E2 -EA,CD-|D/C/A,-A,2- A,A,B,C-|CD-DB,- B,A,-A,G,-|G,4- G,Gcd-|de-e2- eAcd-|d/c/A- A2- AABc-|cd-dB- B2Bc-|c4 [Ec][Fd][Ge][Af]-|
+V:4
+C,,G,,C,E,- E,C,C,2|F,,c,,F,C,- C,F,-F,2|D,,A,,D,A,, D,4|G,,d,,G,d,,- D,4|C,,G,,E,G,, E,4|F,,c,,A,c,, F,4|d,,a,,d,a,, d,4|B,,g,,d,g,, B,,g,,d,g,,|A,,e,,A,e,, A,,e,,A,e,,|
+V:1
+[Af][Ge]-[Ge]c- cA-A2|[CEA]4 [Ec][Fd][Ge][Af]-|[Af][Ge][Fd][Ec]- [Ec]cBc-|c3 G gfed-|d3 d defe-|
+V:4 
+D,a,,d,a,, D,a,,d,a,,|d,,a,,d,a,, d,,a,,d,a,,|D,,A,,F,A,, G,,d,,B,d,,|C,g,,e,g,, d',,g,,c,g,,|G,,d,,B,d,, B,d,,G,d,,|
+V:1
+e3 c cd-de-|ed-dc- cBAG-|G3 G gfed-|d3 d defe-|e3c cd-de-|ed-dc- cB-Bc-|[B3e][B,CE]- [B,CE]4-|[B,CE]3 [B,CE]- [B,CE]4|z2z [CDE]- [CDE]4-|[CDE]8-|[CDE]8|]
+V:4
+A,,e,,c,e,, B,e,,A,e,,|F,,c,,A,c,, F,,c,,G,,d,,|C,g,,e,g,, d,g,,c,g,,|G,,d,,B,d,, B,d,,G,d,,|A,,e,,c,e,, B,e,,A,e,,|F,,c,,A,c,, G,,d,,B,d,,|A,,E,A,6|A,,E, A,6|C,G, c,4 G,2|z8|z8|]
+    

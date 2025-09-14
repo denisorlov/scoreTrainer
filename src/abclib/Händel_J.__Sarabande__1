@@ -1,0 +1,49 @@
+X:1
+T:Sarabande
+C:G.F. Händel
+Z:www.sheetmusiclibrary.website
+%%measurenb 0
+%%score { ( 1 2 ) | ( 3 4 ) }
+L:1/4
+Q:1/4=114
+M:3/2
+I:linebreak 
+K:F
+V:1 treble nm="Piano" snm="Pno."
+V:2 treble 
+V:3 bass 
+V:4 bass 
+V:1
+"^Moderato - Grave" [A,DF]2 [A,DF]2 z [EG] | [A,^CE]2 [A,CE]2 z2 | [=CFA]2 [CFA]2 z [GB] | %3
+ [CEG]2 [CEG]2 z [^FA] | [DGB]2 [DGB]2 z [Ac] | [D=FA]2 [DFA]2 z A | [Ad]2 [Gd]2 z e | %7
+ [EA^c]2 [EAc]2 z2 | [A,DF]2 [A,DF]2 z [EG] | [A,^CE]2 [A,CE]2 z2 | [=CFA]2 [CFA]2 z [GB] | %11
+ [CEG]2 [CEG]2 z [^FA] | [DGB]2 [CGB]2 z c | [CFA]3"_cresc." A d ^c | d e f2 e d | %15
+ [FAd]2 [FAd]2 z2 :|[M:6/4]"^Var. 1" F2 D2 x2 | E2 ^C2 z2 |!<(! A3 c B A!<)! |!>(! G2 E2 C2!>)! | %20
+ B3 d c B | z G F E D z | d3 f"_dim." e d | ^c e A c E G |!p! F2 D2 x2 | E2 ^C2 z2 | %26
+!mf! A3 c B A | G2 E2 C2 | B3 d c B | A3 A d2- | d!f! e f2 Te2 | d4 z2 :| %32
+"^Var. 2"!f! [A,DF]2 [A,DF]4 | [^CE]2 [CE]4 | [=CA]2 [CA]4 | [EG]2 [EG]4 | [DB]2 [GB]4 | %37
+ [FA]2 [FA]4 | A2 G4 | [EA^c]4 z2 |!p! [A,DF]2 [A,DF]3 [DF] | [^CE]2 [CE]4 | [CFA]2 [CFA]3 [FA] | %43
+ [EG]2"_cresc." [CEG]4 |!mf! [DB]2 [DGB]3 [GB] | [FA]3"_cresc." A d ^c | d e!ff! f2 Te2 | %47
+ !^![FAd]4 z2 :| %48
+V:2
+ x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 :| %16
+[M:6/4] x A, z A G F | z =B, x4 | x C F2 z2 | x D x =B, z A | z D"_cresc." G2 z2 | A2 z2 x A- | %22
+ A A G2 z2 | x6 | x A, z A G F | x =B, x4 | x C F2 z2 | x"_dim." D x =B, z A | %28
+ x"_cresc." D G2 z2 | x G F E z F | G B A d ^c G | z B A G F E :| x6 | x6 | x6 | x6 | x6 | x6 | %38
+ d2 e3 d | x6 | x6 | x6 | x6 | x6 | x6 | x4 G2 | x2 A d ^c A | x6 :| %48
+V:3
+ D,2 D,,2 z2 | A,,3 B,, A,, G,, | [F,,F,]2 [F,,F,]2 z2 | C,3 C, B,, A,, | G,,2 G,2 G,,2 | %5
+ D,2 D,2 z C, | B,,2 B,2 z2 | A,2 A,,2 x x | D,2 D,,2 z2 | A,,3 B,, A,, G,, | %10
+ [F,,F,]2 [F,,F,]2 z2 | C,3 C, B,, A,, | G,, G, E, G, C, E, | F,3 D, B,2 | G,2 A,2 A,,2 | %15
+ D,2 D,,2 z2 :|[M:6/4] D,2 F,2 D,2 | A,2 A,,2 z2 | F,2 A,2 F,2 | C,2 z2 z ^F, | G,2 B,2 G,2 | %21
+ D2 D,2 z C | B,2 B,,2 B,2 | A,3 G, F, E, | D,2 F,2 D,2 | A,2 A,,2 z2 | F,2 A,2 F,2 | %27
+ C,2 z2 z ^F, | G,2 B,2 G,2 | D2 z C B, A, | B, G, A,2 A,,2 | D,4 D,,2 :| D, ^C, D, E, F, G, | %33
+ A, G, A, E, ^C, A,, | F, E, F, G, A, B, | C G, E, G, C, E, | G, ^F, G, A, B, C | %37
+ D A, F, A, D, F, | B,, F, B, A, G, B, | A,"^dim." B, A, G, F, E, | D, A,, F,, A,, D,, F,, | %41
+ A,, E, A, G, F, E, | F, C, A,, C, F,, A,, | C, B,, C, D, E, F, | G, D, B,, D, G,, B,, | %45
+ D, E, D, C, B,, A,, | B,, G,, A, G, A, A,, | D A, F, A, !^![D,,D,]2 :| %48
+V:4
+ x6 | x6 | x6 | x6 | x6 | x6 | x6 | x3 G, F, E, | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 :| %16
+[M:6/4] x6 | z2 z G, A, E, | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x3 G, A, E, | x6 | x6 | x6 | %29
+ x6 | x6 | x6 :| x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 | %47
+ x6 :| %48

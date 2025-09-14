@@ -1,0 +1,23 @@
+X:1
+T:Air in D
+C:Bach J.S.
+%%measurenb 0
+%%score { ( 1 2 ) | 3 }
+L:1/4
+Q:1/4=66
+M:4/4
+I:linebreak 
+K:G
+V:1 treble nm="Piano" snm="Pno."
+L:1/8
+V:2 treble 
+V:3 bass 
+V:1
+L:1/8
+"^Adagio" B8 | B8- | B2 ec{/B} AGFG | F4 E D3 | d8- |!<(! dB=FE A^Gdc!<)! |!>(! c8-!>)! |  c!<(!AED GFcB!<)! | B6 ^cd | G2 GA/B/ BAAG | FE E/F/G G2 FE |1!>(! D8!>)! :|2 D8 |:  F4- FG/F/ E/F/D | d6 =F2 | E2 e2- edcB | c4- c/B/A/G/ FE | ^DE F2- FG A2- | AB c4 B2 |  AGFE FG/A/ G2 | E8 | G4- GBAG | e6 d^c | B/A/d D2 E3 F/G/ | F3 E D4 | G6 BA | A6 cB | B6 dc |  c8 | D4- DFAc | cA B4 Bc/d/ | G4- GBd=f | e6 G2 | FA c4 E2 | D2 AB/c/ cB-BA |  G/F/E- EF"_rit." G2 FG | G8 :| 
+V:2
+L:1/4
+ [DG]4 | [EG]4 | [EG]2 E2 | [A,D]4 | D =F/E/ F2- | F x3 | x E/D/ E2- | E x3 | [DG]3 [DA] |  [B,E] ^C E [CE] | [A,D] [B,D] [A,D] [A,^C] |1 [F,A,]4 :|2 [F,A,]4 |: [A,D]2- [A,D] x | [=FB]3 x |  x4 | [EA]2- [EA] x | x7/2 A,/ | B, F/E/ ^D/E/ F | [B,E] C C ^D | [G,B,]4 | [A,E]2- [A,E] D |  [EA^c]3 [EA] | D A, B, ^C | [A,D]2 [F,A,]2 | D E/=F/ E2 | x F/E/ F2 | x ^G/F/ G [EB] | [EA]4 |  [A,C]2- [A,C] D | [DG] [DG]2 [DG] | D C [B,=F]2 | [EGc]3 D | C [EG]2 C | A, [DF] [DG] [CE] |  [B,D] C [A,D] [CD] | [B,D]4 :| 
+V:3
+L:1/4
+"_Con Ped." G,, G, F, F,, | E,, E, D, D,, | C,, C, ^C, ^C,, | D,, D, C, C,, |  B,, [^G,D] [A,D] A,, | ^G,, [B,D] E, [^G,E] | A,, [A,C] [G,C] G,, | F,, [A,C] D, [F,D] |  G,, G, F, F,, | E,, E, ^C, A,, | D, B,, A,, A,, |1 D,,/E,,/F,,/G,,/ A,,/C,/B,,/A,,/ :|2 D,,4 |:  D,, D, C, C,, | B,,, [^G,D]/E/ [A,D=F] A,, | ^G,, [B,D] E, [^G,E] | A,, A, G, G,, |  F,, [F,A,]/B,/ [E,A,C] E,, | ^D,, E,, F,, D,, | E,, [C,G,] [A,,A,] [B,,A,] | E,, E, D, D,, |  ^C,, ^C, B,, B,,, | A,,, A, G, G,, | F,, F, G,, A,, | D,, D, C, C,, | B,,, [B,,G,] [C,G,] C,, |  ^C,, [^C,A,] [D,A,] D,, | ^D,, [^D,B,] [E,B,] ^G,, | A,, A, G, G,, | F,, F, D, F, |  G, G,, =F,, =F, | E, E,, D,, D, | C, C,, B,,, B,, | A,, A, G, G,, | F,, D,, G,, C, |  D, C, D, D,, | [G,,D,]4 :| 

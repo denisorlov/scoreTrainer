@@ -1,0 +1,19 @@
+X:1
+T:Waltz in B Minor, Op. 18
+C:Vincent
+%%measurenb 0
+%%score { 1 | 2 }
+L:1/4
+Q:1/4=88
+M:3/4
+I:linebreak 
+K:D
+V:1 treble nm="Piano solo" snm="Pno. solo"
+L:1/8
+V:2 bass 
+V:1
+L:1/8
+!pp! (B>d !>!f4) | (c>e !>!f4) | (B>d !>!f3 g) | (g>e)(ed)(dc) | (B>d !>!f4) | (c>e !>!f4) |  (d>f(!>!d'c')(c'b)) | b3 (e dc) | (B>d !>!f4) | (c>e !>!f4) | (B>d !>!f3) g | (g>e)(ed)(dc) |  (B>d !>!f4) |"_cresc." (c>e !>!a4) | (d>fbace) | d3 (d e^e) |:!mf! (f>g !>!c'3) c' |  (!>!c'>b f3)!p! (f | !>!a>gcec)(e | !>!g>f!<(!Bde^e)!<)! |!mf! (f>g !>!c'3) c' |  (!>!c'>b f3)!p! (f | !>!a>gcec)(e | !>!g>fB!>(!edc)!>)! |!pp! (B>^d !>!f4) | (^A>e !>!f4) |  (B>^d f3 ^^f) | (^g>e)(e^d)(dc) | (B>^d !>!f4) | (^A>e !>!f4) | !mf! (B>^d[f^d'][ec'])([ec'][db]) |1 [^db]3 (d e^e) :|2 [^db]4 z2 |] 
+V:2
+L:1/4
+"^Pno." B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] |  B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,^A,E] | B,, [F,B,D] [F,B,D] |  B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] |  B,, [F,B,D] [F,B,D] | A,, [G,A,CE] [G,A,CE] | A,, [F,A,D] [G,A,C] | D, [F,A,D] z |:  F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] |  F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,D] [F,B,D] |  B,, [F,B,^D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,^D] [F,B,D] | F,, [F,^A,E] [F,A,E] |  B,, [F,B,^D] [F,B,D] | F,, [F,^A,E] [F,A,E] | B,, [F,B,^D] [F,^A,E] |1 B,, [B,^D] z :|2  [B,^D]2 z |] 

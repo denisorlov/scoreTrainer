@@ -1,0 +1,30 @@
+X:1
+T:Moon River
+C:Henry Mangini
+Q:1/4=90
+%%measurenb 0
+%%score { ( 2 3 ) | ( 4 5 ) }
+L:1/8
+M:3/4
+K:C
+V:2 treble nm="Piano" snm="Pno."
+V:3 treble 
+L:1/4
+V:4 bass 
+V:5 bass 
+L:1/4
+V:2
+L:1/8
+ z6 | z6 |:!p!!<(! G6!<)! | (d2 c4) |!mp! (B3 A)GF | (G4 (C2) | B3) AGF | G4 (C2 |!>(! D6-) |  D4 (E2 |!p! C6) | G2 E3 (D | C6) | G2 E3 (D |!<(! [G,=B,D]2) [A,CE]2 [CEG]2!<)! | !mf! (cB-)"_dim." B3 (A | B)A- A3 (G | A6) |!p!!<(! G6!<)! |!>(! (d2 c4)!>)! |!mp! (B3 A)GF |  G4 (C2 | B3) AGF | G4 (C2 |!>(! D6-) | D4 (E2!>)! |!p!!<(! C6) | E4 G2 | (c6!<)! | !f!!>(! (d4) c2)!>)! |!mp! G6- | G2 (BA)GF | G6- | G(CB)AGF |!>(! G6!>)! |!p! C6 | (F2 D4-) |  D4 (E2 | C6-) | C6 :| (C6- |!pp! !fermata!C6) |] 
+V:3
+L:1/4
+ x3 | x3 |: x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | (E ^D2) |
+ (=D ^C2) | (=C B,2) | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | A, A,2 | [A,C] [A,C]2 |
+ [EA] [EA]2 | [_EA]3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 :| (A, G,) F, |
+ !fermata!E,3 |]
+V:4
+L:1/8
+!p! (C,,G,,) E,2 G,,2 | (C,,G,,) E,2 G,,2 |: (C,,G,,) E,2 (C,,B,,,) | A,,,E,,C,E, A,2 |  (F,,C,) A,4 | (E,,C,) G,4 | (F,,C,) A,4 | (E,,C,) G,4 | (B,,,B,,)D,F, A,2 | (E,,B,,)D,^G, B,2 |  (B,,E,) A,2 A,,2 | (G,,E,) _B,2 G,,2 | (F,,C,) A,2 F,,2 | (_B,,,F,,)D,_A, C2 | (=A,,4 G,,2) |  A,4 z2 | G,4 z2 | F,4 z2 | (C,,G,,) E,2 (C,,B,,,) | A,,,E,,C,E, A,2 | (F,,C,) A,4 |  (E,,C,) G,4 | (F,,C,) A,4 | (E,,C,) G,4 | (B,,,B,,)D,F, A,2 | (E,,B,,)D,^G, B,2 |  [A,,E,]2 [A,,E,]4 | [G,,E,]2 [G,,E,]4 | [^F,,E,]2 [F,,E,]4 | [=F,,_E,]6 | =E,,-C, G,2 E,,2 |  F,,C, A,4 | E,,-C, G,2 E,,2 | (F,,C,) A,4 | E,,-C, G,2 E,,2 | (A,,,E,,) C,2 A,,,2 |  (D,,A,,) F,2 D,,2 | (G,,F,) B,2 G,,2 | (C,,G,,) E,2 G,,2 | (C,,G,, E,2 G,,2) :|  ([F,,C,]2 [E,,B,,]2) [D,,A,,]2 | !fermata![C,,G,,]6 |] 
+V:5
+L:1/4
+ x3 | x3 |: x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | (^F,, B,,) B,,, |  (E,, A,,) A,,, | (D,, G,,) G,,, | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 |  x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 | x3 :| x3 | x3 |] %42

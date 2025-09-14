@@ -1,0 +1,48 @@
+X:1
+T:Pardonne-moi ce caprice d'enfant
+C:Carli P.
+%%score { ( 1 2 ) | 3 }
+L:1/8
+Q:1/4=110
+M:12/8
+K:Eb
+V:1 treble nm="Ф-но"
+V:2 treble 
+V:3 bass 
+V:1
+ [cec']/a/g/e/c/A/ G/E/C/A,/ z z3 [Bc=eg][Bcea][ceb] | c'3 aga f3 fga | %2
+ b2 b/a/ gfg e3 efg | c'2 c'/b/ agf [fgd']2 [fgc']2 [fg=b]2 | %4
+ [cec']/a/g/e/c/A/ G/E/C/A,/ z z3 [_Bc=eg][Bcea][ce_b] | c'3 aga f3 fga | %6
+ b2 b/a/ gfg e3 efg | c'2 c'/b/ agf [fgd']2 [fgc']2 [fg=b]2 | %8
+ [cec']/a/g/e/c/A/ G/E/C/A,/ z z3 z3 | %9
+ [EAc] [EAc]2- [EAc]3 [DAB][DAB][B,D] [B,D]2 [CE]/[DF]/ | %10
+ [EGc] [EGc]2- [EGc]3 [EG][EG][EG] CDE | %11
+ [CEB] [CEB]2- [CEB]3 [DAB][DAB][DAc] [DAc]2 [GB]/[^F=A]/ | %12
+ [EGc] [EGB]2- [EGB]3 [EG][EG][EG] [EG]3 | %13
+ [EAc] [EAc]2- [EAc]3 [DAB][DAB][B,D] [B,D]2 [CE]/[DF]/ | [EGc] [EGB]2- [EGB]3 [EG][EG][EG] CDE | %15
+ [CEB] [CEA]2- [CEA]3 [=B,FG]2 d/e/ [FGd]c=B | c6- c3 [_Bc=eg][Bcea][Bce_b] | c'3 aga f3 fga | %18
+ b2 b/a/ gfg e3 efg | c'2 c'/b/ agf [fgd']2 [fgc']2 [fg=b]2 | %20
+ [cec']/a/g/e/c/A/ G/E/C/A,/ z z3 [_Bc=eg][Bcea][ce_b] | c'3 aga f3 fga | %22
+ b2 b/a/ gfg e3 efg | c'2 c'/b/ agf [fgd']2 [fgc']2 [fg=b]2 | c'6- c'6 |] %25
+V:2
+ x12 | [cea][ce][ce] [ce]3 [ABd][ABd][ABd] [ABd]3 | [Bd][Bd][Bd] [Bd]3 [Gc][Gc][Gc] cde | %3
+ [ce][ce][ce] [ce]3 x6 | x12 | [c_ea][ce][ce] [ce]3 [ABd][ABd][ABd] [ABd]3 | %6
+ [Bd] [Bd]2 [Bd]3 [Gc][Gc][Gc] cde | [ce][ce][ce] [ce]3 x6 | x12 | x12 | x12 | x12 | x12 | %13
+ x12 | x12 | x12 | [EG][EG][EG] [EG][EG][EG] [EG]3 x3 | %17
+ [c_ea][ce][ce] [ce]3 [ABd][ABd][ABd] [ABd]3 | [Bd][Bd][Bd] [Bd]3 [Gc][Gc][Gc] cde | %19
+ [ce][ce][ce] [ce]3 x6 | x12 | [c_ea][ce][ce] [ce]3 [ABd][ABd][ABd] [ABd]3 | %22
+ [Bd] [Bd]2 [Bd]3 [Gc][Gc][Gc] cde | [ce][ce][ce] [ce]3 x6 | [eg][eg][eg] [eg][eg][eg] [eg]6 |] %25
+V:3
+ [C,,C,]3 z2 G,/E,/ C,2 C, C,,C,,C,, | F,,3 F,,3 B,,3 B,,,B,,,B,,, | %2
+ E,,3 E,,3 C,3 C,,3 | F,,3 F,,3 G,,3 G,,3 | %4
+ [C,,C,]4 z G,/E,/ C,2 C, C,,D,,=E,, | F,,3 F,,3 B,,3 B,,,B,,,B,,, | %6
+ E,,3 E,,3 C,3 C,,3 | F,,3 F,,3 G,,3 G,,3 | %8
+ [C,,C,]3 z2 G,/E,/ C,2 C, B,,A,,=G,, | %9
+ F,,2 F,, F,,G,,A,, B,,3 B,,,C,,D,, | E,,3 E,,G,,B,, C,3 C,,D,,E,, | %11
+ F,,2 F,, F,,G,,A,, B,,3 B,,,C,,D,, | E,,3 E,,G,,B,, C,3 C,,D,,E,, | %13
+ F,,2 F,, F,,G,,A,, B,,3 B,,,C,,D,, | E,,3 E,,G,,B,, C,3 C,,D,,E,, | %15
+ F,,2 F,, F,,G,,A,, B,,3 G,,=A,,=B,, | C,3 G,,3 C,2 C, C,,D,,=E,, | %17
+ F,,3 F,,3 B,,3 B,,,B,,,B,,, | E,,3 E,,3 C,3 C,,3 | %19
+ F,,3 F,,3 G,,3 G,,3 | [C,,C,]3 z2 G,/E,/ C,2 C, C,,D,,=E,, | %21
+ F,,3 F,,3 B,,3 B,,,B,,,B,,, | E,,3 E,,3 C,3 C,,3 | %23
+ F,,3 F,,3 G,,3 G,,3 | C,3 G,,3 C,,6 |] %25

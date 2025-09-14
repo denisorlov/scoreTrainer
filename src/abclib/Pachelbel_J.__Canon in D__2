@@ -1,0 +1,22 @@
+X:1
+T:Canon in D
+T:Pachelbel J.
+%%measurenb 0
+%%score { ( 1 2 ) | 3 }
+L:1/16
+Q:1/4=65
+M:4/4
+K:D
+V:1 treble nm="Piano" snm="Pno."
+V:2 treble 
+L:1/8
+V:3 bass 
+V:1
+L:1/16
+"^1" f8 e8 | d8 c8 | B8 A8 | B8"_rit." c8 ||"^5""^a tempo" [df]8 [ce]8 | [Bd]8 [Ac]8 |  [GB]8 [FA]8 | [GB]8 [Ac]8 ||"^9" f8 e8 | F8 A8 | B8 A8 | G8 E4 E4 || "^13" a2fg a2fg aABc defg | f2de f2FG ABAG AFGA | G2BA G2FE FEDE FGAB |  G2BA B2cd cBAB cdef ||"^17" [fa]2[df][eg] [fa]2[df][eg] [ca]ABc defg |  [df]2[Bd][ce] [df]2FG [FA]BAG Adcd | [GB]2[Bd][Ac] [GB]2AG [FA]GFG ABcd |  [GB]2[Bd][Ac] [Bd]2cB cded cdBc ||"^21" f8 e4 c4 | d8 c4 A4 | B8 A4 x4 |  G8 ^c8 ||"^25" f8 e4 c4 | d8 c4 A4 | B8 A4 x4 | G8 A8 || "^29" f4 [dd']2f2 f2g2[cfc']2e2 | d4 [Bb]2d2 d2e2[Ada]2c2 | B4 [Gg]4 [fd']4 [da]4 |  [db]4 [Bg]4 [ca]4 [Ff]2[Gg]2 ||"^33" aAdf afdA aAbB aAgG |  fFBd fdBF fFgG fFeE | dDGB dBGD dDFA fFAd |  gGBd bBdg aAce bBc'c ||"^37" d'dfa d'afd d'dea c'cea | "_dim." c'cdf bBdf bBcf aAcf | aABd gGBd gGAd fFAd | fFGB eEgG aAce [Bb]2[cc']2 || "^41" [dfad']4 [FAd]4 [CEAc]2>[ec']2 aece | [Bdfb]4 [DFB]4 [A,CFA]2>[ca]2 fcAc |  [GBdg]4 [G,B,DG]4 [F,A,DF]4 [FAdf]4 | [G,B,DG]4 [Bdgb]4 [CEAc]2[EAce]2[Acea]2[ceac']2 || "^45" [fd'f']16 | z8 [d'd'']8 |] 
+V:2
+L:1/8
+ x8 | x8 | x8 | x8 || x8 | x8 | x8 | x8 || dcdF EAGA | ddcB cfab | gfeg fedc | BABd d2 c2 || x8 |  x8 | x8 | x8 || x8 | x8 | x8 | x8 || a2 fa abag | f2 df fgfe | d2 Bd d2 Fd | d=cBc A4 ||  a2 fa abag | f2 df fgfe | d2 Bd d2 Fd | d=cBc ^c2 de || x8 | x8 | x8 | x8 || x8 | x8 | x8 |  x8 || x8 | x8 | x8 | x8 || x8 | x8 | x8 | x8 || x8 | x4 x4 |] 
+V:3
+L:1/16
+ (D,2A,2D2F2) (A,,2E,2A,2C2) |  (B,,2F,2B,2D2) (F,,2C,2F,2A,2) |  (G,,2D,2G,2B,2)"_simile con Pedal" (D,,2A,,2D,2F,2) |  (G,,2D,2G,2B,2) (A,,2E,2A,2C2) || (D,2A,2D2F2) (A,,2E,2A,2C2) | (B,,2F,2B,2D2) (F,,2C,2F,2A,2) |  (G,,2D,2G,2B,2) (D,,2A,,2D,2F,2) | (G,,2D,2G,2B,2) (A,,2E,2A,2C2) ||  (D,2A,2D2A,2) (A,,2E,2A,2E,2) | (B,,2F,2B,2F,2) (F,,2C,2F,2C,2) |  (G,,2D,2G,2D,2) (D,,2A,,2D,2A,,2) | (G,,2D,2G,2D,2) (A,,2E,2A,2E,2) ||  (D,2A,2D2A,2) (A,,2E,2A,2E,2) | (B,,2F,2B,2F,2) (F,,2C,2F,2C,2) |  (G,,2D,2G,2D,2) (D,,2A,,2D,2A,,2) | (G,,2D,2G,2D,2) (A,,2E,2A,2E,2) ||  (D,2A,2D2A,2) (A,,2E,2A,2E,2) | (B,,2F,2B,2F,2) (F,,2C,2F,2C,2) |  (G,,2D,2G,2D,2) (D,,2A,,2D,2A,,2) | (G,,2D,2G,2D,2) (A,,2E,2A,2E,2) ||  (D,2A,2D2A,2) (A,,2E,2A,2E,2) | (B,,2F,2B,2F,2) (F,,2C,2F,2C,2) |  (G,,2D,2G,2D,2) (D,,2A,,2D,2A,,2) | (G,,2D,2G,2D,2) (A,,2E,2A,2C2) ||  (D,A,DF DA,D,A,) (A,,E,A,C A,E,A,,E,) | (B,,F,B,D B,F,B,,F,) (F,,C,F,A, F,C,F,,C,) |  (G,,D,G,B, G,D,G,,D,) (D,,A,,D,F, D,A,,D,,A,,) | (G,,D,G,B, G,D,G,,D,) (A,,E,A,C A,E,A,,E,) ||  (D,A,DF DA,D,A,) (A,,E,A,C A,E,A,,E,) | (B,,F,B,D B,F,B,,F,) (F,,C,F,A, F,C,F,,C,) |  (G,,D,G,B, G,D,G,,D,) (D,,A,,D,F, D,A,,D,,A,,) | (G,,D,G,B, G,D,G,,D,) (A,,E,A,C A,E,A,,E,) ||  (D,A,DF DA,D,A,) (A,,E,A,C A,E,A,,E,) | (B,,F,B,D B,F,B,,F,) (F,,C,F,A, F,C,F,,C,) |  (G,,D,G,B, G,D,G,,D,) (D,,A,,D,F, D,A,,D,,A,,) | (G,,D,G,B, G,D,G,,D,) (A,,E,A,C A,E,A,,E,) ||  (D,A,DF DA,D,A,) (A,,E,A,C A,E,A,,E,) | (B,,F,B,D B,F,B,,F,) (F,,C,F,A, F,C,F,,C,) |  (G,,D,G,B, G,D,G,,D,) (D,,A,,D,F, D,A,,D,,A,,) | (G,,D,G,B, G,D,G,,D,) (A,,E,A,C A,E,A,,E,) ||  (D,A,DF DA,D,A,) (A,,E,A,C A,E,A,,E,) | (B,,F,B,D B,F,B,,F,) (F,,C,F,A, F,C,F,,C,) |  (G,,D,G,B, G,D,G,,D,) (D,,A,,D,F, D,A,,D,,A,,) | (G,,D,G,B, G,D,G,,D,) (A,,E,A,C A,E,A,,E,) || "^rit. -   -   -   -   -   -   -   -   -   -   -   -  -" (D,,2A,,2D,2F,2[K:treble] A,2D2F2A2 |  d2f2 a4) d8 |] %46

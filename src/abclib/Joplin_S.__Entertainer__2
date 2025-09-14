@@ -1,0 +1,55 @@
+X:1
+T:The Entertainer
+C:Scott Joplin
+%%measurenb 0
+%%score { 1 | 2 }
+L:1/8
+Q:1/4=70
+M:2/4
+K:C
+V:1 treble nm="Piano" snm="Pno."
+V:2 bass 
+V:1
+L:1/16
+"^Not Fast" decA- ABG2 |DECA,- A,B,G,2- | G8 | z4 [Bdg]2!>(!D^D!>)! |: %4
+!mp! Ec2E c2Ec- |!<(! c4- ccd^d!<)! |!f! ecde- eBd2 |!>(! c6 D^D!>)! |!mp! Ec2E c2Ec- | %9
+!<(! c6 AG!<)! |!f! ^FAce- edcA | d6 D^D |!mp! Ec2E c2Ec- |!<(! c4- ccd^d!<)! |!mf! ecde- eBd2 | %15
+ c6 cd | ecde- ecdc |!<(! ecde- ecdc!<)! |!f! ecde- eBd2 |1 c4-!>(! c2 D^D!>)! :|2 c4- cef^f |: %21
+!f! [eg]2a[eg]- [eg]ef^f | [eg]-[eg]a[eg]- [eg]!>(!ecG!>)! |!mf! ABcd edcd | G!<(!efg agef!<)! | %25
+!f! [eg]2a[eg]- [eg]ef^f | [eg]2a[eg]- [eg]ga^a | [gb]b2[_gb]- [gb]agd | g4- gef^f | %29
+ [eg]2a[eg]- [eg]ef^f | [eg]-[eg]a[eg]- [eg]!>(!ecG!>)! |!mf! ABcd edcd | c4- cG!<(!^FG!<)! | %33
+!f! c2Ac- cAcA | Gceg- gecG | A2c2 ed2c- |1 c4- cef^f :|2 c4- c2!>(!D^D!>)! ||!mp! Ec2E c2Ec- | %39
+!<(! c4- ccd^d!<)! |!f! ecde- eBd2 |!>(! c6 D^D!>)! |!mp! Ec2E c2Ec- |!<(! c6 AG!<)! | %44
+!f! ^FAce- edcA | d6 D^D |!mp! Ec2E c2Ec- |!<(! c4- ccd^d!<)! |!mf! ecde- eBd2 | c6 cd | %50
+ ecde- ecdc |!<(! ecde- ecdc!<)! |!f! ecde- eBd2 | c4 [cc']4 |: %54
+[K:F]!mf! [fa]^g[fa]2- [fa]2[ac']2 | [bd']2BA Bcd2 | [df]e[df]2- [df]2[fa]2 | [gb]2G^F GABg | %58
+ d2gd- dgd2 | c4 f4 | e^g=be'- e'd'=bc' | a4 ^a4 | [fa]^g[fa]2- [fa]2[ac']2 | [bd']2BA Bcd2 | %64
+ [df]e[df]2- [df]2[fa]2 | [gb]2G^F GABg | d2gd- dgd2 | c4!f!!>(! [=Bf]2>f2!>)! | %68
+!mf! ac'2g- gcde |1 f2Bc defg :|2!<(! f4 [fac']4!<)! ||[K:C]!f! c2Ac- cAcA | Gceg- gecG | %73
+ A2c2 ed2c- | c4 [egc']4 |:!mf! [DF]2[^CE][DF]- [DF][CE][DF]2 | z AdA cdcA | %77
+ [EG]2[^D^F][EG]- [EG][DF][EG]2 | z cec dedc | [Bd]2[^A^c][Bd]- [Bd][Ac][Bd]2 | z faf gagf | %81
+ !>!c'!>!c' !>!c'4 !>!a2 | !>!g2 [EG][EG] [EG]2[EG]2 | [DF]2[^CE][DF]- [DF][CE][DF]2 | %84
+ z AdA cdcA | [EG]2[^D^F][EG]- [EG][DF][EG]2 | z cec dedc | A^GA=g- gf2c | e^dea- ac'ge | %89
+ c2c2 ed2!>!c- |1 c2[EG][EG] [EG]2[EG]2 :|2 c4 !>![cc']4 |] %92
+V:2
+L:1/8
+ z4 | z4 | D,/E,/C,/A,,/- A,,/B,,/A,,/_A,,/ | .G,,2 G,,[G,,B,,] |: C,[E,G,] G,[G,_B,C] | %5
+ (F,[A,C]) E,[G,C] | G,,[E,G,] G,,[F,G,] | C,[G,C] [G,C][G,B,] | C,[E,G,] G,[G,_B,C] | %9
+ (F,[A,C]) E,_E, | D,[^F,A,] D,[F,A,] |!>(! [G,B,]G,, A,,B,,!>)! | C,[E,G,] G,[G,_B,C] | %13
+ (F,[A,C]) E,[G,C] | G,,[E,G,] G,,[F,G,] | C,[G,C] [G,C]2 | !>!C,G, !>!_B,,G, | %17
+ !>!A,,G, !>!_A,,G, | G,[G,C] G,[G,B,] |1 [C,E,]G,, A,,B,, :|2 [C,E,]G,, C,,2 |: C,G, G,,G, | %22
+ C,G, G,,G, | F,[A,C] F,[_A,C] | E,[G,C] D,[G,B,] | C,G, G,,G, | C,G, G,,E, | D,[G,B,] D,[A,C] | %28
+ [G,B,]!>!F, !>!E,!>!D, | !>!C,G, G,,G, | C,G, G,,G, | F,[A,C] F,[_A,C] | E,[G,C] D,[G,B,] | %33
+ [F,A,][F,A,] [^F,A,][^F,A,] | [CE][CE] [CE][CE] | D,D, G,G, |1 %36
+ [C,E,]!>!G,, !>!E,,"^Bass: Rpt 8vb"!>!D,, :|2 [C,E,]G,, C,,[G,,B,,] || C,[E,G,] G,[G,_B,C] | %39
+ (F,[A,C]) E,[G,C] | G,,[E,G,] G,,[F,G,] | C,[G,C] [G,C][G,B,] | C,[E,G,] G,[G,_B,C] | %43
+ (F,[A,C]) E,_E, | D,[^F,A,] D,[F,A,] |!>(! [G,B,]G,, A,,B,,!>)! | C,[E,G,] G,[G,_B,C] | %47
+ (F,[A,C]) E,[G,C] | G,,[E,G,] G,,[F,G,] | C,[G,C] [G,C]2 | !>!C,G, !>!_B,,G, | %51
+ !>!A,,G, !>!_A,,G, | G,[G,C] G,[G,B,] | [C,E,]G,, C,,2 |:[K:F] F,A, C,A, | B,,B, F,B, | %56
+ D,A, A,,A, | G,B, D,B, | B,[B,D] G,^G, | A,,A, D,A, | E,=B, ^G,=B, | [A,C]2 [G,C]C, | F,A, C,A, | %63
+ B,,B, F,B, | D,A, A,,A, | G,B, D,B, | B,[B,D] G,^G, | %67
+!<(! !>!A,,/!>!F,,/!>!E,,/!>!D,,/!<)! !>!_D,,2 | C,A, CC, |1 F,4 :|2 F,2 F,,2 || %71
+[K:C] [F,A,][F,A,] [^F,A,][^F,A,] | [CE][CE] [CE][CE] | D,D, G,G, | C,2 C,2 |: %75
+ F,[F,A,] A,,[F,A,] | F,[F,A,] A,,[F,A,] | C,[E,G,] G,[E,G,] | C,[E,G,] G,[E,G,] | %79
+ G,[F,G,] B,,[F,G,] | G,[F,G,] D,[F,G,] | [^D,^F,] [D,F,]2 [D,F,] | [E,G,]4 | F,[F,A,] A,,[F,A,] | %84
+ F,[F,A,] A,,[F,A,] | C,[E,G,] G,[E,G,] | C,[E,G,] G,[E,G,] | F,D, E,F, | G,[G,C] [^F,C][G,C] | A,D, G,B, |1 C4 :|2 !>!C!>!G, !>!C,2 |] %92

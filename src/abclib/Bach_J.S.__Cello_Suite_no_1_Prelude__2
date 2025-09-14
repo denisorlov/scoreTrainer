@@ -1,0 +1,47 @@
+X:1
+T:Cello Suite no. 1 - Prelude
+C:Bach J.S.
+%%score { ( 1 2 ) | 3 }
+L:1/16
+Q:1/4=70
+M:4/4
+I:linebreak 
+K:G
+V:1 treble nm="Piano" snm="Pno."
+V:2 treble 
+V:3 bass 
+V:1
+ (Gdb)a bdbd (Gdb)a bdbd | (Gec')b c'ec'e (Gec')b c'ec'e | (Gfc')b c'fc'f (Gfc')b c'fc'f | %3
+ (Ggb)a bgbg (Ggb)a bgbf | (Ggb)a bgfg egfg Bd^cB | (^cga)g agag (cga)g agag | %6
+ (fad')^c' d'aga faga dfed | (EBg)f gBgB (EBg)f gBgB | E^cde dcBA (gfe)d' ^c'bag | %9
+ (fed)d' ad'fa (def)a gfed | ^g(d=fe) fdgd b(dfe) fdgf | (cea)b c'aed (cea)b c'afe | %12
+ (^dfd)f afaf (dfd)f afaf | (gfe)g fgaf gfed cBAG | (Fcd)c dcdc (Fcd)c dcdc | %15
+ (GB=f)e fBfB (GBf)e fBfB | (Gce)d ecec (Gce)d ecec | (Gfc')b c'fc'f (Gfc')b c'fc'f | %18
+ (Gdb)a bgfe dcBA GFED | (^CAe)f gefg (CAe)f gefg | (CAd)e fdef (CAd)e fdef | %21
+ (CAd)f (b^c'!fermata!d'2-) d'ABc defg | afde fgab c'afg abc'd' | %23
+ (_e'd'^c'd') (d'=c'bc') c'afe dABc | (DAd)f abc'a bgdc BGAB | (DGB)d gabg (^c'_bab) (ba^ga) | %26
+ (agf)g ge^cB (Ace)g a^c'd'c' | (d'af)e fadf Ad^cB AGFE | D2(c'b agfe) d(c'ba gfed) | %29
+ c(bag fedc) B(agf edcB) | Agfe fada eafa gaea | fada gaea fada gaea | fada eafa x axa x axa | %33
+ x axa x axa x axa x axa | x axa x axa x axa x axa | x axa x axa gafa gaea | %36
+ fade =fd^fd gd^gd ad_bd | bdc'd ^c'dd'd _e'd=e'd =f'd^f'd | (g'bd)b g'bg'b (g'bd)b g'bg'b | %39
+ (g'ad)a g'ag'a (g'ad)a g'ag'a | (f'c'd)c' f'c'f'c' (f'c'd)c' f'c'f'c' | !fermata![bg']16 |] %42
+V:2
+ x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | %15
+ x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | x16 | %30
+ x16 | x16 | x8 gxa x bxd x | axb x c'xd x bxc' x d'xb x | c'xb x c'xa x bxa x bxg x | %35
+ axg x axf x x8 | x16 | x16 | x16 | x16 | x16 | x16 |] %42
+V:3
+ G,,2D,2B,2A,2 B,2D,2B,2D,2 | G,,2E,2C2B,2 C2E,2C2E,2 | G,,2F,2C2F,2 G,2F,2G,2F,2 | %3
+ G,,2G,2B,2A,2 B,2G,2B,2G,2 | G,,2G,2B,2A,2 B,2G,2F,2G,2 | ^C,2G,2A,2G,2 A,2G,2A,2G,2 | %6
+ F,,2A,,2D,2^C,2 D,2A,,2G,,2A,,2 | E,,2B,,2G,2F,2 G,2B,,2G,2B,,2 | %8
+ E,,2^C,2D,2E,2 D,E,F,G, G,,A,,B,,C, | (D,E,F,)F,, A,,2F,,2 A,,F,,E,,D,, D,,E,,F,,G,, | %10
+ E,(=F,D,^G,) F,D,^G,,D, B,,(D,F,E,) F,D,G,F, | C,2E,2A,2B,2 C2A,2E,2D,2 | %12
+ ^D,2F,2D,2F,2 A,2F,2A,2F,2 | G,2F,2E,2G,2 F,2G,2E,2F,2 | F,,2C,2D,2C,2 D,2C,2D,2C,2 | %15
+ G,,2B,,2=F,2E,2 F,2B,,2F,2B,,2 | G,,2C,2E,2D,2 E,2C,2E,2C,2 | G,,2F,2C,2B,,2 C,2F,,2C,2F,2 | %18
+ G,2D,2B,,2A,,2 D,,E,,F,,G,, A,,B,,C,D, | ^C,2A,,2E,,2F,,2 G,,2E,,2F,,2G,,2 | %20
+ =C,2A,,2D,,2E,,2 F,,2D,,2E,,2F,,2 | (F,D,A,,)F,, (B,,,^C,,!fermata!D,,2-) D,,2B,,,2D,,2F,,2 | %22
+ A,,F,,D,,E,, F,,G,,A,,B,, C,A,,F,,G,, A,,B,,C,D, | C,B,,A,,D, E,F,A,C C,B,,C,D, D,^C,D,_E, | %24
+ B,,A,,G,,B,, C,D,,G,,B,, A,,C,B,,A,, F,,D,,A,,,D,, | %25
+ D,,G,,,B,,,D,, G,,F,,E,,G,, ^C,D,E,D, D,E,F,E, | %26
+ F,,G,,A,,G,, G,,B,,E,F, G,E,^C,A,, E,,^C,,B,,,C,, | %27
+ D,,G,,B,,C, D,B,,F,D, F,,^C,,^D,,E,, F,,G,,A,,B,, |B,,2E,,F,, G,,A,,B,,C, D,E,,F,,G,, A,,B,,C,D, | E,F,,G,,A,, B,,C,D,E, F,G,,A,,B,, C,D,E,F, |A,G,F,E, F,D,A,D, A,F,A,D, A,E,A,G, | F,D,A,D, A,E,A,G, A,D,A,F, A,E,A,G, |A,D,A,F, A,F,A,E, G,,2A,,2B,,2A,,2 | A,,2B,,2C,2A,,2 B,,2C,2D,2B,,2 |C,2B,,2C,2A,,2 B,,2A,,2B,,2G,,2 | A,,2G,,2A,,2F,,2 A,,F,,A,,G,, A,,E,,A,,G,, |E,,D,,A,,F,, [=F,,A,,D,]2[^F,,A,,D,]2 [G,,B,,D,]2[^G,,B,,D,]2[A,,D,F,]2[_B,,D,=F,]2 |[B,,D,=F,]2[C,E,G,]2[^C,E,G,]2[D,^F,A,]2 [_E,G,_B,]2[=E,G,C]2[=F,A,C]2[^F,A,D]2 |G,2B,,2G,,2B,,2 G,2B,,2G,2B,,2 | G,2A,,2D,,2A,,2 G,2A,,2D,,2A,,2 | F,2C,2D,,2C,2 F,2C,2F,2C,2 |[G,,D,G,]16 |] %42

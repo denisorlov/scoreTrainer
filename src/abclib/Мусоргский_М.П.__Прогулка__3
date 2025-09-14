@@ -1,0 +1,55 @@
+X:1
+T:Promenade (Прогулка)
+C:Мусоргский М.П.
+%%measurenb 0
+%%score { ( 1 2 ) | 3 }
+L:1/4
+Q:1/4=80
+M:5/4
+I:linebreak 
+K:Bb
+V:1 treble nm="Фортепиано" snm="Ф-но"
+V:2 treble 
+V:3 bass 
+V:1
+"^Allegro guisto, nel modo russico, senza allegrezza, ma poco sostenuto"!f! !tenuto!G !tenuto!F !tenuto!B (!tenuto!c/f/ !tenuto!d) | %1
+[M:6/4] (!tenuto!c/f/ !tenuto!d) !tenuto!B !tenuto!c !tenuto!G !tenuto!F | %2
+[M:5/4] [B,DG] [A,CF] [B,DB] (c/f/ d) |[M:6/4] (c/f/ d) [DGB] [=EGc] [G,CG] [A,CF] | %4
+[M:5/4] !tenuto!F !tenuto!G !tenuto!D (!tenuto!F/G/ !tenuto!C) | %5
+[M:6/4] (!tenuto!G/A/ !tenuto!F) [Ff] [Fd] (c/B/ F) | %6
+[M:5/4] !tenuto!F !tenuto!G !tenuto!D (!tenuto!F/G/ E) | %7
+[M:6/4] (!tenuto!B/c/ _A) [A_a] [Af] (e/_d/ A) | %8
+ [_A,_A] [B,B] [A,A] [B,B]/[Cc]/[Ee]/[B,B]/ [A,A] | %9
+ [_DF_A_d]/[EAce]/ [FAdf]/[A_a]/[_GBe_g]/[FAdf]/ [EAce]/[Gg]/[FBdf]/[Dd]/ [EAce] | %10
+[M:5/4] [_A,_A] [B,B] [A,A] [B,B]/[Cc]/[Ee]/[B,B]/ | %11
+[M:6/4] [Cc] [Dd] [Cc] [Dd]/[Ff]/[Gg]/[Dd]/ [Cc] | %12
+ [FAcf]/[Gc=eg]/ [Acfa]/[cc']/[Bdgb]/[Acfa]/ [Gceg]/[Bb]/[Adfa]/[Ff]/ [Gceg] | %13
+ a/=e/ [Fdf] [Aca] [=EBd] [Aca] [EBd] | f/c/ [FBd] [FAf] [FBd] f/c/ [FBd] | %15
+ [Gc] [CFA] [DFB] [Gc] [CFA] B/d/ | [=EGc] [CDFA] [EGc] [Ff] [_EGBe]/[Dd]/[CFAc]/[DFB]/ | %17
+ [CFc] [DFd] [FAcf] [GBeg]/[Bb]/ [Ff] [Gg] | [Ff] [EGBe]/[Dd]/[CFAc]/[DFB]/ [CFc] [DFd] [FAcf] | %19
+ [GBeg]/[Bb]/ [Ff] [Gg] [Ff] G F | [GB=eg]/[Bb]/ [Ff] [Gg] [Ff] [B,EG] [A,CF] | %21
+ [B,FB] [CFAc]/[Ff]/ [DFBd] [CFAc]/[Ff]/ [DFBd] [B,DFB] | %22
+ [CEGc] [G,C=EG] [A,CF] [G,DG] [A,CF] [B,DB] | [CFAc]/[Ff]/ [DFBd] [B,DGB] [EGce] [CFAc] [DFB] |] %24
+V:2
+ x5 |[M:6/4] x6 |[M:5/4] z2 x [CA] [FA] |[M:6/4] [CA] [FB] z4 |[M:5/4] x5 |[M:6/4] x4 F F | %6
+[M:5/4] x5 |[M:6/4] x4 _A A | E3 E3 | x6 |[M:5/4] E3 E- E/ z/ |[M:6/4] =G3 G3 | x6 | [Ac] x5 | %14
+ [FA] x5 | E/=E/ z2 _E/=E/ x [DF] | x6 | x6 | x6 | x6 | x6 | x6 | x6 | x6 |] %24
+V:3
+ z5 |[M:6/4] z6 |[M:5/4] [G,,G,] [A,,F,] [G,,G,] [F,,F,] [D,,D,] | %3
+[M:6/4] [F,,F,] [B,,B,] [G,,G,] [C,,C,] [=E,,=E,] [F,,F,] |[M:5/4] z5 | %5
+[M:6/4] z2 [F,,F,] [B,,B,] [G,,G,] [F,,F,] |[M:5/4] z5 | %7
+[M:6/4] z2 [_A,,_A,] [_D,_D] [B,,B,] [A,,A,] | %8
+ [_G,,,_G,,]2 [F,,,F,,] [G,,,G,,] [G,,,G,,] [G,,_G,] | %9
+ [F,,F,]/[E,,E,]/ [_D,,_D,] [E,,E,]/[F,,F,]/ [_A,,_A,] [B,,B,] [A,,A,] | %10
+[M:5/4] [_G,,,_G,,]2 [F,,,F,,] [G,,,G,,] [G,,_G,]/ z/ | %11
+[M:6/4] [B,,,B,,]2 [A,,,A,,] [B,,,B,,] [B,,,B,,] [B,,B,] | %12
+ [A,,A,]/[G,,G,]/ [F,,F,] [G,,G,]/[A,,A,]/ [C,C] [D,D] [C,C] | %13
+ [A,,A,] [B,,B,] [F,,F,] [G,,G,] [F,,F,] [G,,G,] | %14
+ [D,,D,] [G,,G,] [D,,D,] [G,,G,] [D,,D,] [G,,G,] | %15
+ [C,,C,] [F,,F,] [G,,G,] [C,,C,] [F,,F,] [G,,G,] | %16
+ [C,,C,] F,, [C,,C,] [F,,,F,,] [G,,,G,,] [A,,,A,,]/[B,,,B,,]/ | %17
+ [A,,,A,,] [B,,,B,,] [A,,,A,,] [G,,,G,,] [F,,,F,,] [G,,,G,,] | %18
+ [F,,,F,,] [G,,,G,,] [A,,,A,,]/[B,,,B,,]/ [A,,,A,,] [B,,,B,,] [A,,,A,,] | %19
+ [G,,,G,,] [F,,,F,,] [G,,,G,,] [F,,,F,,] G, F, | %20
+ [C,,C,] [F,,,F,,] [G,,,G,,] [F,,,F,,] [E,,E,] [F,,F,] | %21
+ [D,,D,] [C,,C,] [B,,,B,,] [A,,,A,,] [G,,,G,,] [G,,G,] | [C,,C,] [=E,,=E,] [F,,F,] [B,,,B,,] [A,,,A,,] [G,,,G,,] | [F,,,F,,] [B,,,B,,] [G,,G,] [C,,C,] [F,,F,] [B,,B,] |] %24
