@@ -88,7 +88,7 @@ function setAbcjsHelper(){
 
 function prepareMetronomeText(renderObj:IVisualObj){
     let mf = renderObj.getMeterFraction();
-    utils.elemType('metronomeText', HTMLInputElement).value = drumBeats[mf.num+'/'+mf.den] || '';
+    utils.elemType('metronomeText', HTMLInputElement).value = drumBeats[mf.num] || '';//+'/'+mf.den
 }
 function prepareVoicesCheckControl(visualObj:IVisualObj){
     midiHandler.checkVoices=[]; // reset
@@ -131,7 +131,6 @@ function buildSheetMusicPlayer(){
     // @ts-ignore
     //abcjsHelper.getSynthControl().restart();
     resetIndicator();
-    setChanged(false);
 }
 
 function buildSheetMusicEditor(){
@@ -147,17 +146,7 @@ function buildSheetMusicEditor(){
     //abcjsHelper.getSynthControl().restart();  // preplay
     //utils.elem('fixedDivBottom').style.display = 'block';
     resetIndicator();
-    setChanged(false);
-}
-
-function setChanged(_changed: boolean){
-    changed = _changed;
-    let changeInfo = elem('changeInfo'),
-        buildPlayerButton = elem('buildPlayerButton');
-    changeInfo.style.color = _changed ? 'red' : 'green';
-    changeInfo.title = _changed ? langUtils.mess('paramsChangedToApply', [buildPlayerButton.title]) : langUtils.mess('paramsNotChanged');
-    if(_changed) showStatus(changeInfo.title);
-    return _changed;
+    showStatus('Sheet Music Rebuild');
 }
 
 function getAbcText(){
@@ -333,8 +322,9 @@ function initBeatLines(visualObj: IVisualObj){
     visualObj.makeVoicesArray().forEach(arr=>{
         arr.forEach(obj=>{
             if(!obj.elem.elemset || obj.elem.elemset.length<1) return;
-            lines[obj.line] = lines[obj.line] || {line: obj.line, top_elem:null, top:null};
             let bRect = obj.elem.elemset[0].getBoundingClientRect();
+            if(bRect.left==0 ) return; // bug
+            lines[obj.line] = lines[obj.line] || {line: obj.line, top_elem:null, top:null};
             if(lines[obj.line].top==null || bRect.top<lines[obj.line].top){
                 lines[obj.line].top = parseInt(bRect.top);
                 lines[obj.line].top_elem = obj.elem.elemset[0];
@@ -354,30 +344,6 @@ function scrollToBeatLineTop(measureNumber: number){
     }
 }
 
-// function scrollForElementRect(element: Element){
-//     if(!autoScroll) return;
-//     let bcRect = element.getBoundingClientRect();
-//     scrollForTopBottom(bcRect.top, bcRect.bottom);
-//     //scrollForBottom(bcRect.bottom);
-//     //scrollForTop(bcRect.top);
-// }
-//
-// function scrollForTopBottom(top: number, bottom: number){
-//     if(!autoScroll) return;
-//     let st  = scrollTopThreshold, sb  = scrollBotThreshold,
-//         half = (sb-st)/2, // середина диапазона скролла
-//         scrlTopLen = top<st ? top-st-50 : 0, // задвигаем вниз с запасом 50px
-//         // проверяем условием просадки верха ниже середины и с запасом по низу, т.к. внизу обычно есть запас
-//         scrlBotLen = top<st+half || bottom<sb+60 ? 0 : bottom-sb,
-//         scrlLen = scrlBotLen+scrlTopLen
-//     ;
-//     if (top>st+half && bottom>sb+60)
-//         console.log(top, bottom, scrollTopThreshold, scrollBotThreshold, scrlTopLen, scrlBotLen);
-//     if(scrlLen!=0){
-//         window.scrollBy({ top: scrlLen, left: 0, behavior: 'smooth' })
-//     }
-// }
-
 function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     let drumStr  = (utils.elemType('metronomeText', HTMLInputElement).value || '').trim(),
         metronome = drumStr.length>4 && (utils.elemType('metronomeUse', HTMLInputElement).checked || utils.elemType('metronomeOnlyUse', HTMLInputElement).checked) ? drumStr : '',
@@ -387,7 +353,7 @@ function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
 
     return {
         drum: metronome, drumBars: 1, drumIntro: extraMeasure ? 1 : 0,
-        chordsOff: onlyMetronome, voicesOff: onlyMetronome
+        chordsOff: true, voicesOff: onlyMetronome
     }
 }
 

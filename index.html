@@ -60,6 +60,18 @@
             width: 1em;
             height: 1em;
         }
+        /* select-input */
+        input[type='text'].inputSelect{
+            width:60px;
+        }
+        select.inputSelect{
+            width:20px;
+            padding:1px 0 1px 0;
+            margin: 2px 0 2px 0;
+        }
+        select.inputSelect:hover{
+            width:88px;
+        }
     </style>
 </head>
 <body>
@@ -80,10 +92,10 @@
     <button id="slowerButton" title="Медленнее">&#9196;</button>
     <span id="tempoWarp" style="padding-top: 0.2em;cursor: pointer;" title="Toggle half/whole"></span>
     <button id="fasterButton" title="Быстрее">&#9195;</button><!---->
-    <button id="buildPlayerButton" title="Построить">&#128195;</button><!-- @TODO to remove -->
     <button id="buildEditorButton" title="Редактировать">&#128221;</button>
     <button id="noteOnViewButton" title="Ноты миди" onclick="utils.toggle('#noteOnView');noteOnView.style.top='150px';noteOnView.style.left='0'">&#127896;</button><!-- https://symbolonly.com/office-symbol.html -->
     <button id="settingButton" onclick="utils.toggle('#settingPanel');utils.toggle('#settingPanel2');">&#9881;</button>
+    <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
     <select id="selectLang" style="width: 2em;font-size: 1em;"></select>
         </span>
     <div id="settingPanel" style="display: none; background-color: #9f9f9f;">
@@ -101,8 +113,7 @@
         <span id="changeInfo" style="display: none; cursor: help">&#9998;</span><!-- @TODO for remove -->
     </div>
     <div id="settingPanel2" style="display: none;">
-        AS: <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
-        ST: <input type="number" min="100" step="30" id="scrollTopThreshold" value="220" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
+        ST: <input type="number" min="0" step="30" id="scrollTopThreshold" value="120" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
         <!--SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="400" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">-->
         <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');/*utils.toggle('#scrollBotThresholdLine')*/;">--</button>
     </div>
@@ -113,7 +124,7 @@
         </div>
         <button id="toStartButton" title="В начало...">&#9664;</button>
         <input type="number" step="5" min="0" id="maxWrongNotes" value="0" title="Максимум неверных нот" style="width: 2.5em">
-        <input type="number" step="5" min="0" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 1.5em">
+        <input type="number" step="5" min="0" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 2.5em">
         &#127929;:<span id="voicesCheckControlPanel" title="Выбрать часть голосов для контроля">...</span>&#127900;
         <!--button id="resetErrButton" title="" style="font-size: initial">&#9881;</button-->
     </div>
@@ -135,7 +146,15 @@
         <span id="mouseWheelNote">&#128432;MouseWheel</span>
         <!--input type="checkbox" id="allowDragging"><button id="downNote">&#8600;</button><button id="upNote">&#8599;</button-->
         <span id="noteButtons"></span>
-        <input type="text" id="replaceFrom" style="width: 3em"><input type="text" id="replaceTo" style="width: 3em"><input type="button" id="replaceButton" title="Replace" value="&#128471;">
+        <!--input type="text" id="replaceFrom" style="width: 3em"-->
+        <!-- select-input -->
+        <input type="text" id="replaceFrom" class="inputSelect" value=""><select id="replaceFromList" class="inputSelect" onChange="this.previousSibling.value = this.value;"
+             onMouseOver="this.previousSibling.style.display='none'"
+             onMouseOut="this.previousSibling.style.display='inline-block'">
+            <option></option>
+        </select>
+        <!-- see initReplaceFromList -->
+        <input type="text" id="replaceTo" style="width: 3em"><input type="button" id="replaceButton" title="Replace" value="&#128471;">
         <button id="downloadMidi">&#128190; MIDI</button><a id="midi-download" download="example.mid"></a>
         <button id="saveToFileBut">&#128190;</button>
         <button id="fontSmallerButton" title="Font smaller">&#128475;</button><button id="fontBiggerButton" title="Font bigger">&#128474;</button>
@@ -161,7 +180,7 @@ C,2|z2|]
     <button onclick="setAbcText(loadedAbcText);" id="repareAbcText" title="Восстановить" style="font-size: 1em">Восстановить</button-->
 </div>
 
-<div id="noteOnView" style="position: fixed; top: 150px;left: 0;border: lightgray solid 2px;border-radius: 10px;font-size: initial;background-color: darkslategray;cursor: move;">
+<div id="noteOnView" style="display:none; position: fixed; top: 150px;left: 0;border: lightgray solid 2px;border-radius: 10px;font-size: initial;background-color: darkslategray;cursor: move;">
     &nbsp;&nbsp;
     <button id="noteOnViewLeft" style="display: none" title="Влево" onclick="this.parentNode.style.left='0px';this.parentNode.style.right='initial'">⮘</button>
     <button id="noteOnViewRight" style="display: none" title="Вправо" onclick="this.parentNode.style.right='0px';this.parentNode.style.left='initial'">⮚</button>

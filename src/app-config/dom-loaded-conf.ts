@@ -28,11 +28,9 @@ document.addEventListener('DOMContentLoaded', (event): void => {
     //selectAbc
     setSelectAbcText();
 
-    setChanged(false);
     for (let el of utils.elem('settingPanel').children) {
         if(['INPUT'].indexOf(el.tagName) >= 0)
             utils.addListener("change", "#"+el.id, ()=>{
-                setChanged(true);
                 buildSheetMusicEditor();
             });
     }
@@ -43,18 +41,17 @@ document.addEventListener('DOMContentLoaded', (event): void => {
     setScrollLines();
     //
     createEditorButtons();
+    //
+    initReplaceFromList();
 
     //setKeydown();
     // midiHandler + WrongNotes Indicator
     setWrongNotesIndicator();
     // language titles
     langUtils.initSelect(utils.elemType('selectLang', HTMLSelectElement))
-});
+}); // DOMContentLoaded
 
 function setButtons(){
-    utils.addListener("click", "#buildPlayerButton", ()=>{
-        buildSheetMusicEditor();//buildSheetMusicPlayer();
-    });
     utils.addListener("click", "#buildEditorButton", ()=>{
         utils.toggle('#fixedDivBottom');//buildSheetMusicEditor();
     });
@@ -132,8 +129,8 @@ function setScrollLines(){
     // });
     utils.addListener("change", "#autoScroll", (ev)=>{
         autoScroll = (ev.currentTarget as HTMLInputElement).checked; // global
-        stEl.disabled = !autoScroll;//= sbEl.disabled
-        topLine.style.opacity  = (autoScroll ? 1 : 0.3)+'';//= botLine.style.opacity
+        //stEl.disabled = !autoScroll;//= sbEl.disabled
+        //topLine.style.opacity  = (autoScroll ? 1 : 0.3)+'';//= botLine.style.opacity
     });
 
     let event = new Event('change');
@@ -230,6 +227,17 @@ function createEditorButtons() {
     utils.addListener('click', '#fontBiggerButton', ()=>{
         abcTextArea.style.fontSize = parseFloat(abcTextArea.style.fontSize)+0.5+'em';
     });
+}
+
+function initReplaceFromList(){
+    let select = document.getElementById('replaceFromList'),
+        options=[
+            '\\\$', '!\\\d!', '![^!]+!','{[^} ]+}', '%\\d+\\n', '\\\[Q:[^\\\]]+\\\]'
+        ];
+
+    for(let o in options ){
+        select!.appendChild( new Option( options[o], options[o],  false, false) );
+    }
 }
 
 function setKeydown(){
@@ -431,7 +439,6 @@ class PlayedNoteView {
 //////// played notes
 function initElems(elems) {
     elems.changeInfo = utils.elem('changeInfo');
-    elems.buildPlayerButton = utils.elem('buildPlayerButton');
     elems.abcTextArea = utils.elemType(abcTextElemId, HTMLTextAreaElement);
     //elems.playButton = utils.elem('playButton');
     elems.slowerButton = utils.elemType('slowerButton', HTMLButtonElement);

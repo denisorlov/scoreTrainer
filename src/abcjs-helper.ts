@@ -49,6 +49,8 @@ class AbcjsHelper {
         editorParams.abcjsParams = this._abcOptions
         this._editor = new ABCJS.Editor(editArea, editorParams);
         this._editor.synth.synthControl.visualObj.setUpAudio();
+        // https://paulrosen.github.io/abcjs/audio/synthesized-sound.html#settune-visualobj-useraction-audioparams
+        this._editor.synth.synthControl.setTune(this._editor.synth.synthControl.visualObj, true, this._synthControllerAudioParams)
         this._mode = HelperMode.editor;
     }
 
