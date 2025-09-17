@@ -67,13 +67,24 @@ function setSelectAbcText(){
         let value = (ev.target as HTMLSelectElement).value;
         if(!value) return;
         (ev.target as HTMLSelectElement).title = value;
-        fetch('/src/abclib/'+value)
-            .then(response => response.text())
+        fetch('./src/abclib/'+value)
+            .then(response => {
+                // Проверяем, успешно ли выполнен запрос (статус в диапазоне 200–299)
+                if (!response.ok) {
+                    // Если запрос не успешен, генерируем ошибку с соответствующим статусом
+                    throw new Error(`HTTP error: status: ${response.status} statusText: ${response.statusText}`);
+                }
+                return response.text();
+            })
             .then(abcText =>{
                 setAbcText(abcText);
                 undoBuffer1 = getAbcText();
                 editHash.resetArray();editHash.push([]); handleUndoRedoButtons();
                 buildSheetMusicEditor();//buildSheetMusicPlayer();
+            })
+            .catch(error => {
+                // Обрабатываем ошибки, возникшие при выполнении запроса
+                showStatus('Fetch error:'+ error);
             });
     }, utils.elemType('selectGroupAbc', HTMLSelectElement));
 }
@@ -201,7 +212,7 @@ function createEditorButtons() {
         AbcJsUtils.downloadMidi(getAbcText(), utils.elemType('midi-download', HTMLAnchorElement))
     });
     utils.addListener('click', '#saveToFileBut', (e)=>{
-        utils.initSaveTextFile(getAbcText(), 'application/octet-stream', 'saved');
+        utils.initSaveTextFile(getAbcText(), 'application/octet-stream', 'Author__Name__Lev.txt');
     });
 
     utils.addListener('wheel', '#mouseWheelNote', (e) =>{
