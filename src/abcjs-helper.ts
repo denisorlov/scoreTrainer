@@ -310,6 +310,68 @@ let AbcJsUtils = {
         return false;
     },
 
+    getCurrentKey(){
+        let ks = abcjsHelper.getVisualObj().getKeySignature();
+        return ks.root+ks.acc+ks.mode;
+    },
+
+    currentIsFlat(){
+        return AbcJsUtils.isFlat(AbcJsUtils.getCurrentKey());
+    },
+
+    isFlat(key:string){
+        let found = keySigns.filter(obj=>obj.keys.indexOf(key)>-1);
+        if(found.length>0 && found[0].signs.length>0 && found[0].signs[0][1]=='♭')
+            return found[0].signs.length;
+        return 0
+    },
+
+    getPitchesArr(key:string){ // for ex. "F#"
+        let res: string[] = [];
+        for(let k in pitchNames)
+            if((pitchNames[k]as pitchName).note.indexOf(key)>-1) res.push(k);
+        return res;
+    },
+    /**
+     *
+     * @param key for ex. "F#", "B♭" or "B_"
+     * @param color for ex. "yellow"
+     */
+    paintKey(key:string, color:string){
+        key = key.replace(/_/, '♭');
+        abcjsHelper.getVisualObj().makeVoicesArray().forEach(arr=>{
+            arr.forEach((obj)=>{
+                let elem = obj.elem as Elem;
+                if(elem.type=="note" && elem.abcelem.midiPitches.length>0){
+                    // @ts-ignore
+                    let noteHeads:Element[] = Array.from(elem.elemset[0].childNodes).
+                    filter(n=>(n as Element).classList.contains('abcjs-notehead')); // head of notes
+                    elem.abcelem.midiPitches.forEach((el, ind)=>{
+                        if(AbcJsUtils.getPitchesArr(key).indexOf(el.pitch.toString())>-1){
+                            //(noteHeads[ind] as Element).classList.add('green');
+                            noteHeads[ind].setAttribute('color', color);
+                        }
+                    });
+                }else
+                if(elem.elemset!= undefined && elem.abcelem.el_type=="keySignature"){ // кеy # or ♭
+                    elem.abcelem.accidentals.forEach((el, ind)=>{
+                        // 'fsharp', 'bflat',
+                        if((el.note+el.acc).toLowerCase()==key.toLowerCase().replace(/#/,'sharp').replace(/♭/,'flat')){
+                            (elem.elemset[0].childNodes[ind]as Element).setAttribute('color', color);
+                        }
+                    })
+                }
+            })
+        });
+    },
+
+    paintCurrentKey(color:string){ // AbcJsUtils.paintCurrentKey('lightgreen')
+        let found = keySigns.
+            filter(obj=>obj.keys.indexOf(AbcJsUtils.getCurrentKey())>-1);
+        if(found.length>0 && found[0].signs.length>0)
+            found[0].signs.forEach(sn=>AbcJsUtils.paintKey(sn, color));
+    },
+
     downloadMidi(abc:string, a: HTMLAnchorElement) {
         a.setAttribute("href", ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" }));
         a.click();
@@ -357,6 +419,16 @@ interface IVisualObj {
     getMeterFraction(): {num: number, den: number}
     millisecondsPerMeasure():number
     makeVoicesArray()
+    getKeySignature():KeySignature
+}
+
+interface KeySignature {
+    abselem: Abselem
+    accidentals: Accidental[]
+    el_type: string
+    root: string
+    acc: string
+    mode: string
 }
 
 interface IAbcOptions extends Partial<abcOptionsStrict> {}
@@ -537,6 +609,7 @@ interface Abcelem {
     minpitch: number
     maxpitch: number
     abselem: Abselem
+    accidentals: Accidental[] // for type key-signature
     currentTrackMilliseconds: number
     currentTrackWholeNotes: number
     midiPitches: MidiPitch[]
@@ -571,6 +644,10 @@ interface Abselem {
     elemset: Elemset[]
     counters: Counters
     notePositions: NotePosition[]
+}
+
+interface Accidental {
+    acc: string, note: string, verticalPos: number
 }
 
 interface Fixed {

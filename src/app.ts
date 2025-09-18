@@ -1,5 +1,6 @@
 /**
  * @TODO
+ * see "TODO midiPitches в зависимости от ключа"
  * сброс счетчика ошибок???
  * сохранение настроек
  * настройки отображения к нотам
@@ -87,8 +88,9 @@ function setAbcjsHelper(){
 }
 
 function prepareMetronomeText(renderObj:IVisualObj){
-    let mf = renderObj.getMeterFraction();
-    utils.elemType('metronomeText', HTMLInputElement).value = drumBeats[mf.num] || '';//+'/'+mf.den
+    let mf = renderObj.getMeterFraction(),
+        metroText = utils.elemType('metronomeText', HTMLInputElement);
+    metroText.value = metroText.value == '' ? drumBeats[mf.num] || '' : metroText.value;
 }
 function prepareVoicesCheckControl(visualObj:IVisualObj){
     midiHandler.checkVoices=[]; // reset
@@ -194,9 +196,12 @@ function clickListener(abcElem, tuneNumber, classes, analysis, drag, mouseEvent)
         midiGraceNotePitches: abcElem.midiGraceNotePitches
     });
     let clicked = '';
+
     abcElem.midiPitches.forEach(mp=>{
-        let pn = (pitchNames[mp.pitch] as pitchName);
-        clicked+=pn.note+' ('+pn.oct+') ';
+        let pn = (pitchNames[mp.pitch] as pitchName),
+            noteName = pn.note.length>1 && AbcJsUtils.currentIsFlat() ? pn.note[1] : pn.note[0] // midiPitches в зависимости от ключа
+        ;
+        clicked+=noteName+' ('+pn.oct+') ';
     })
     if(clicked.length) showStatus(clicked);
 
@@ -352,6 +357,7 @@ function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     ;
 
     return {
+        soundFontUrl: "./midi-js-soundfonts/MusyngKite/", // FluidR3_GM  MusyngKite
         drum: metronome, drumBars: 1, drumIntro: extraMeasure ? 1 : 0,
         chordsOff: true, voicesOff: onlyMetronome
     }

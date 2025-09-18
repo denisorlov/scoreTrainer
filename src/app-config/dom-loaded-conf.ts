@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', (event): void => {
 
     //selectAbc
     setSelectAbcText();
-
+    // on change settingPanel children
     for (let el of utils.elem('settingPanel').children) {
-        if(['INPUT'].indexOf(el.tagName) >= 0)
+        if(['INPUT', 'SELECT'].indexOf(el.tagName) >= 0)
             utils.addListener("change", "#"+el.id, ()=>{
                 buildSheetMusicEditor();
             });
@@ -346,8 +346,10 @@ function settingToStart(){
     resetIndicator();
 }
 function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to draw Wrong Note dynamically?
-    let note = pitchNames[pitch];
-    showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+note.note+' (окт: '+note.oct+')</span>');
+    let note = (pitchNames[pitch]as pitchName),
+        noteName = note.note.length>1 && AbcJsUtils.currentIsFlat() ? note.note[1] : note.note[0] // midiPitches в зависимости от ключа
+    ;
+    showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+noteName+' (окт: '+note.oct+')</span>');
     //-------------------
     let min = 1000, elemForHighlightWrongCls: Elem|null = null,
         step: TimeStep = midiHandler.getStep(midiHandler.getCurrentIndex());
@@ -384,7 +386,10 @@ class PlayedNoteView {
     }
 
     addNote(pitch:number, right: boolean){
-        this.playedNotes[pitch] = new PlayedNote(pitch, (pitchNames[pitch] as pitchName).abc, right);
+        let pn = (pitchNames[pitch] as pitchName),
+            abcNote = pn.note.length>1 && AbcJsUtils.currentIsFlat() ? pn.abc[1] : pn.abc[0] // midiPitches в зависимости от ключа
+        ;
+        this.playedNotes[pitch] = new PlayedNote(pitch, abcNote, right);
         this.renderPlayedNote();
     }
     delNote(pitch){
