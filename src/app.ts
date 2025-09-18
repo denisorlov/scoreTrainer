@@ -43,6 +43,8 @@ const highlightClassName = 'highlight';
 const UnselectedNotesCls = 'unselected-notes';
 /** класс "неправильных нот", для визуализации */
 const HighlightWrongCls = 'highlight-wrong';
+/** путь к библиотеке звуков */
+const soundFontUrl =  "./midi-js-soundfonts/MusyngKite/", // FluidR3_GM  MusyngKite
 
 // @ts-ignore
 let midiHandler = new AbcMidiHandler(paperElemId);
@@ -357,7 +359,7 @@ function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     ;
 
     return {
-        soundFontUrl: "./midi-js-soundfonts/MusyngKite/", // FluidR3_GM  MusyngKite
+        soundFontUrl: soundFontUrl,
         drum: metronome, drumBars: 1, drumIntro: extraMeasure ? 1 : 0,
         chordsOff: true, voicesOff: onlyMetronome
     }
