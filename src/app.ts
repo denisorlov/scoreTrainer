@@ -44,7 +44,7 @@ const UnselectedNotesCls = 'unselected-notes';
 /** класс "неправильных нот", для визуализации */
 const HighlightWrongCls = 'highlight-wrong';
 /** путь к библиотеке звуков */
-const soundFontUrl =  "./midi-js-soundfonts/MusyngKite/", // FluidR3_GM  MusyngKite
+const soundFontUrl =  "./midi-js-soundfonts/MusyngKite/"; // FluidR3_GM  MusyngKite
 
 // @ts-ignore
 let midiHandler = new AbcMidiHandler(paperElemId);
