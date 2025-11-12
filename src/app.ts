@@ -9,6 +9,7 @@
  * индикация МИДИ
  * редактор: инфо по горячи клавишам
  * abcjsHelper.getVisualObj().makeVoicesArray()
+ * https://github.com/paulrosen/abcjs/releases поверять иногда, сейчас 6.5.1(12.11.25)
  *
  * замены: %\d+\r\n, $,
  * убрать форшлаги {[^} ]+}

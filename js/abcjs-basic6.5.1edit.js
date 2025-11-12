@@ -56,7 +56,7 @@ Object.keys(tuneBook).forEach(function (key) {
 abcjs.renderAbc = __webpack_require__(/*! ./src/api/abc_tunebook_svg */ "./src/api/abc_tunebook_svg.js");
 abcjs.tuneMetrics = __webpack_require__(/*! ./src/api/tune-metrics */ "./src/api/tune-metrics.js");
 abcjs.TimingCallbacks = __webpack_require__(/*! ./src/api/abc_timing_callbacks */ "./src/api/abc_timing_callbacks.js");
-var glyphs = __webpack_require__(/*! ./src/write/creation/glyphs */ "./src/write/creation/glyphs.js");
+var glyphs = abcjs.glyphs = __webpack_require__(/*! ./src/write/creation/glyphs */ "./src/write/creation/glyphs.js");
 abcjs.setGlyph = glyphs.setSymbol;
 abcjs.strTranspose = strTranspose;
 var CreateSynth = __webpack_require__(/*! ./src/synth/create-synth */ "./src/synth/create-synth.js");
@@ -790,7 +790,7 @@ function renderOne(div, tune, params, tuneNumber, lineOffset) {
     div.style.overflowY = "auto";
     div = div.children[0]; // The music should be rendered in the inner div.
   } else div.innerHTML = "";
-  var engraver_controller = new EngraverController(div, params);
+  var engraver_controller = window['ABCJS']['engraverController'] = new EngraverController(div, params);
   engraver_controller.engraveABC(tune, tuneNumber, lineOffset);
   tune.engraver = engraver_controller;
   if (params.viewportVertical || params.viewportHorizontal) {
@@ -12851,7 +12851,8 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
             var tripletDurationTotal = 0; // try to mitigate the js rounding problems.
             var tripletDurationCount = 0;
             currentVolume = [105, 95, 85, 1];
-            for (var v = 0; v < voice.length; v++) {
+            if(voice) // can be null
+			for (var v = 0; v < voice.length; v++) {
               // For each element in a voice
               var elem = voice[v];
               switch (elem.el_type) {
@@ -17538,7 +17539,8 @@ AbstractEngraver.prototype.popCrossLineElems = function (s, v) {
 AbstractEngraver.prototype.containsLyrics = function (staves) {
   for (var i = 0; i < staves.length; i++) {
     for (var j = 0; j < staves[i].voices.length; j++) {
-      for (var k = 0; k < staves[i].voices[j].length; k++) {
+      if(staves[i].voices[j]) // can be null
+	  for (var k = 0; k < staves[i].voices[j].length; k++) {
         var el = staves[i].voices[j][k];
         if (el.lyric) {
           // We just want to see if there are vocals below the music to know where to put the dynamics.
@@ -17681,12 +17683,14 @@ AbstractEngraver.prototype.createABCVoice = function (abcline, tempo, s, v, isSi
     if (hint) this.ties[i].setHint();
     voice.addOther(this.ties[i]);
   }
+  if(this.abcline)
   for (var j = 0; j < this.abcline.length; j++) {
     setAveragePitch(this.abcline[j]);
     this.minY = Math.min(this.abcline[j].minpitch, this.minY);
   }
   var isFirstStaff = s === 0;
   var pos = 0;
+  if(this.abcline)
   while (pos < this.abcline.length) {
     var ret = getBeamGroup(this.abcline, pos);
     var abselems = this.createABCElement(isFirstStaff, isSingleLineStaff, voice, ret.elem);
