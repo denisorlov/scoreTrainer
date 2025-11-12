@@ -18,6 +18,13 @@ const utils = {
         }
     },
 
+    roundNumber: function (x) {
+        return parseFloat(x.toFixed(2));
+    },
+    sprintf: function(template, ...args) {
+        return template.replace(/%f/g, () => args.shift());
+    },
+
     setDraggable: function (el: HTMLElement){
         let rect = el.getBoundingClientRect();
         el.style.position = 'fixed';

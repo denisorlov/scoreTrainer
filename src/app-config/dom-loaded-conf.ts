@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', (event): void => {
     //
     initReplaceFromList();
 
-    //setKeydown();
+    setKeydown();
+    initSelectPaintKeys();
     // midiHandler + WrongNotes Indicator
     setWrongNotesIndicator();
     // language titles
@@ -89,6 +90,19 @@ function setSelectAbcText(){
     }, utils.elemType('selectGroupAbc', HTMLSelectElement));
 }
 
+function initSelectPaintKeys(){
+    checkAbcjsHelper();
+    let select = utils.elemType('selectPaintKeys', HTMLSelectElement);
+    select.addEventListener('change', (ev)=>{
+        let value = (ev.target as HTMLSelectElement).value;
+        switch(value) {
+            case 'no': abcjsHelper.clearAllPaint();
+            case 'key': abcjsHelper.paintCurrentKey('lightgreen');
+            default: abcjsHelper.paintKey(value, 'lightgreen');
+        }
+    });
+}
+
 function handleUndoRedoButtons(){
     elemType('undoButton', HTMLButtonElement).disabled = !editHash.hasPrevious();
     elemType('redoButton', HTMLButtonElement).disabled = !editHash.hasNext();
@@ -125,19 +139,19 @@ function setTempoButtons(){
 
 function setScrollLines(){
     let stEl = utils.elemType('scrollTopThreshold', HTMLInputElement),
-        //sbEl = utils.elemType('scrollBotThreshold', HTMLInputElement),
-        topLine  = utils.elem('scrollTopThresholdLine')
-        //botLine  = utils.elem('scrollBotThresholdLine')
+        sbEl = utils.elemType('scrollBotThreshold', HTMLInputElement),
+        topLine  = utils.elem('scrollTopThresholdLine'),
+        botLine  = utils.elem('scrollBotThresholdLine')
     ;
 
     utils.addListener("change", "#scrollTopThreshold", (ev)=>{
         scrollTopThreshold = parseInt((ev.currentTarget as HTMLInputElement).value); // global
         topLine.style.top = scrollTopThreshold +'px';
     });
-    // utils.addListener("change", "#scrollBotThreshold", (ev)=>{
-    //     scrollBotThreshold = document.documentElement.clientHeight - parseInt((ev.currentTarget as HTMLInputElement).value); // global
-    //     botLine.style.top = scrollBotThreshold +'px';
-    // });
+    utils.addListener("change", "#scrollBotThreshold", (ev)=>{
+        scrollBotThreshold = document.documentElement.clientHeight - parseInt((ev.currentTarget as HTMLInputElement).value); // global
+        botLine.style.top = scrollBotThreshold +'px';
+    });
     utils.addListener("change", "#autoScroll", (ev)=>{
         autoScroll = (ev.currentTarget as HTMLInputElement).checked; // global
         //stEl.disabled = !autoScroll;//= sbEl.disabled
@@ -146,7 +160,7 @@ function setScrollLines(){
 
     let event = new Event('change');
     stEl.dispatchEvent(event);
-    //sbEl.dispatchEvent(event);
+    sbEl.dispatchEvent(event);
 }
 
 function createEditorButtons() {
@@ -253,28 +267,32 @@ function initReplaceFromList(){
 
 function setKeydown(){
     document.addEventListener('keydown', (event)=>{
-        let key = event.code;
-        let prev = false;
+        let key = event.code,
+            prev = false,
+            bindKeysScroll =utils.elemType('bindKeysScroll', HTMLInputElement).checked;
+        // bindKeysScroll
         switch(key) {
-            case 'Space': // backspace
-                utils.elem('playButton').click(); prev = true; break;
-            case 'ArrowUp': // up narrow
-                utils.elem('fasterButton').click(); prev = true; break;
-            case 'ArrowDown': // down narrow
-                utils.elem('slowerButton').click(); prev = true; break;
+            // case 'Space': // backspace
+            //     utils.elem('playButton').click(); prev = true; break;
+            // case 'ArrowUp': // up narrow
+            //     utils.elem('fasterButton').click(); prev = true; break;
+            // case 'ArrowDown': // down narrow
+            //     utils.elem('slowerButton').click(); prev = true; break;
+            case 'ArrowRight': // up right
+                if(bindKeysScroll){scrollNext(); prev = true;} break;
+            case 'ArrowLeft': // down left
+                if(bindKeysScroll){scrollPrev(); prev = true;} break;
         }
         prev === true ? event.preventDefault() : 0;
     });
 }
 
 function setWrongNotesIndicator(){
-    midiHandler.maxWrongNotes = 4;
-    utils.elemType('maxWrongNotes', HTMLMeterElement).value = midiHandler.maxWrongNotes = 4;
+    utils.elemType('maxWrongNotes', HTMLMeterElement).value = midiHandler.maxWrongNotes = 25;
     utils.addListener('change', '#maxWrongNotes', (ev)=>{
         midiHandler.maxWrongNotes = (ev.target as HTMLMeterElement).value;
     });
-    midiHandler.prizeRightNotes = 5;
-    utils.elemType('prizeNotes', HTMLMeterElement).value = 5;
+    utils.elemType('prizeNotes', HTMLMeterElement).value = midiHandler.prizeRightNotes = 5;
     utils.addListener('change', '#prizeNotes', (ev)=>{
         midiHandler.prizeRightNotes = (ev.target as HTMLMeterElement).value;
     });
@@ -283,7 +301,7 @@ function setWrongNotesIndicator(){
         if(midiHandler.wrongNote>midiHandler.maxWrongNotes){
             resetIndicator();
         }else{
-            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Mistakes:' + midiHandler.wrongNote);
+            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Wrong:' + midiHandler.wrongNote);
             highlightWrongNote(pitch);
         }
         scrollByMidiHandlerSteps();
@@ -293,7 +311,7 @@ function setWrongNotesIndicator(){
         if(midiHandler.wrongNote<1){
             resetIndicator();
         }else{
-            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Mistakes:' + midiHandler.wrongNote);
+            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Wrong:' + midiHandler.wrongNote);
         }
         scrollByMidiHandlerSteps();
     };
@@ -338,7 +356,7 @@ function scrollByMidiHandlerSteps(){
          index = nextIndex<currentIndex ? nextIndex : currentIndex // to begin or continue
     ;
 
-    scrollToBeatLineTop(midiHandler.getStep(index).measureNumber)
+    scrollToBeatLineTop(midiHandler.getStep(index).measureNumber, false)
 }
 function settingToStart(){
     removeClassFromPaper(paperElemId, highlightClassName);
@@ -347,7 +365,7 @@ function settingToStart(){
 }
 function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to draw Wrong Note dynamically?
     let note = (pitchNames[pitch]as pitchName),
-        noteName = note.note.length>1 && AbcJsUtils.currentIsFlat() ? note.note[1] : note.note[0] // midiPitches в зависимости от ключа
+        noteName = note.note.length>1 && abcjsHelper.currentIsFlat() ? note.note[1] : note.note[0] // midiPitches в зависимости от ключа
     ;
     showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+noteName+' (окт: '+note.oct+')</span>');
     //-------------------
@@ -362,11 +380,43 @@ function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to 
             }
         })
     })
-    if(elemForHighlightWrongCls!=null)
-        (elemForHighlightWrongCls as Elem).elemset.forEach(element=>{ // красим элемент
-            element.classList.add(HighlightWrongCls);
-        })
-    setTimeout( ()=>{removeClassFromPaper(paperElemId, HighlightWrongCls)}, durationMs || 1000);
+    // if(elemForHighlightWrongCls!=null)
+    //     (elemForHighlightWrongCls as Elem).elemset.forEach(element=>{ // красим элемент
+    //         element.classList.add(HighlightWrongCls);
+    //     })
+    // setTimeout( ()=>{removeClassFromPaper(paperElemId, HighlightWrongCls)}, durationMs || 1000);
+    if(elemForHighlightWrongCls!=null){
+        let engraverController: EngraverController = ABCJS.engraverController,
+            wrongSet = drawNote(engraverController.renderer, elemForHighlightWrongCls, pitch, HighlightWrongCls);
+        setTimeout( ()=>{
+            for(let k in wrongSet)
+                if(wrongSet[k]!=null) wrongSet[k].remove();
+        }, durationMs || 2000);
+    }
+}
+/**
+ *
+ * @param elem
+ * @param pitch 60 = C
+ * @param cls  ex.: HighlightWrongCls
+ * @param headSymbol default"noteheads.quarter"
+ */
+function drawNote(renderer, elem: Elem, pitch:number, cls:string, headSymbol?:string){
+    let head = AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
+            headSymbol || "noteheads.quarter", cls),
+        headX = parseFloat(head.getAttribute("data-x")||"0"),
+        headY = parseFloat(head.getAttribute("data-y")||"0"),
+        headW = parseFloat(head.getAttribute("data-w")||"0");
+
+    let ledger;
+    if([40, 60,61, 81,82].includes(pitch)) {// Mi2 Do4 La5
+        let engraverController: EngraverController = renderer.controller;
+        if(engraverController.responsive!="resize")
+            headW = headW/engraverController.scale;
+        ledger = AbcJsUtils.printLine(renderer,
+            headX-3, headX + headW+5, headY, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger");
+    }
+    return {head: head, ledger: ledger};
 }
 //////// played notes
 class PlayedNote {
@@ -387,7 +437,7 @@ class PlayedNoteView {
 
     addNote(pitch:number, right: boolean){
         let pn = (pitchNames[pitch] as pitchName),
-            abcNote = pn.note.length>1 && AbcJsUtils.currentIsFlat() ? pn.abc[1] : pn.abc[0] // midiPitches в зависимости от ключа
+            abcNote = pn.note.length>1 && abcjsHelper.currentIsFlat() ? pn.abc[1] : pn.abc[0] // midiPitches в зависимости от ключа
         ;
         this.playedNotes[pitch] = new PlayedNote(pitch, abcNote, right);
         this.renderPlayedNote();

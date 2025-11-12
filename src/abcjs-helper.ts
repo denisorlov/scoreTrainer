@@ -154,6 +154,68 @@ class AbcjsHelper {
         this._delegateSynthControl('destroy');
     }
 
+    _handleKeyElement(key:string|null, handler: Function){
+        key = key==null ? null : key.replace(/_/, '♭');
+        let visualObj;
+        try{
+            visualObj = this.getVisualObj();
+        }catch(e){
+            console.warn('Cannot getVisualObj');
+            return;
+        }
+        visualObj.makeVoicesArray().forEach(arr=>{
+            arr.forEach((obj)=>{
+                let elem = obj.elem as Elem;
+                if(elem.type=="note" && elem.abcelem.midiPitches.length>0){
+                    // @ts-ignore
+                    let noteHeads:Element[] = Array.from(elem.elemset[0].childNodes).
+                    filter(n=>(n as Element).classList.contains('abcjs-notehead')); // head of notes
+                    elem.abcelem.midiPitches.forEach((el, ind)=>{
+                        if(key==null || AbcJsUtils.getPitchesArr(key).indexOf(el.pitch.toString())>-1){
+                            handler(noteHeads[ind]);
+                        }
+                    });
+                }else
+                if(elem.elemset!= undefined && elem.abcelem.el_type=="keySignature"){ // кеy # or ♭
+                    elem.abcelem.accidentals.forEach((el, ind)=>{
+                        // 'fsharp', 'bflat',
+                        if(key==null || (el.note+el.acc).toLowerCase()==key.toLowerCase().replace(/#/,'sharp').replace(/♭/,'flat')){
+                            handler(elem.elemset[0].childNodes[ind]);
+                        }
+                    })
+                }
+            })
+        });
+    }
+    /**
+     *
+     * @param key for ex. "F#", "B♭" or "B_"
+     * @param color for ex. "yellow"
+     */
+    paintKey(key:string, color:string){
+        this._handleKeyElement(key, (elem)=>{elem.setAttribute('color', color)});
+    }
+
+    clearAllPaint(){
+        this._handleKeyElement(null, (elem)=>{elem.removeAttribute('color')});
+    }
+
+    paintCurrentKey(color:string){ // AbcJsUtils.paintCurrentKey('lightgreen')
+        let found = keySigns.
+        filter(obj=>obj.keys.indexOf(this.getCurrentKey())>-1);
+        if(found.length>0 && found[0].signs.length>0)
+            found[0].signs.forEach(sn=>this.paintKey(sn, color));
+    }
+
+    getCurrentKey(){
+        let ks = abcjsHelper.getVisualObj().getKeySignature();
+        return ks.root+ks.acc+ks.mode;
+    }
+
+    currentIsFlat(){
+        return AbcJsUtils.isFlat(this.getCurrentKey());
+    }
+
 
     set abcOptions(value: IAbcOptions | undefined) {
         this._abcOptions = value;
@@ -310,15 +372,6 @@ let AbcJsUtils = {
         return false;
     },
 
-    getCurrentKey(){
-        let ks = abcjsHelper.getVisualObj().getKeySignature();
-        return ks.root+ks.acc+ks.mode;
-    },
-
-    currentIsFlat(){
-        return AbcJsUtils.isFlat(AbcJsUtils.getCurrentKey());
-    },
-
     isFlat(key:string){
         let found = keySigns.filter(obj=>obj.keys.indexOf(key)>-1);
         if(found.length>0 && found[0].signs.length>0 && found[0].signs[0][1]=='♭')
@@ -332,50 +385,82 @@ let AbcJsUtils = {
             if((pitchNames[k]as pitchName).note.indexOf(key)>-1) res.push(k);
         return res;
     },
-    /**
-     *
-     * @param key for ex. "F#", "B♭" or "B_"
-     * @param color for ex. "yellow"
-     */
-    paintKey(key:string, color:string){
-        key = key.replace(/_/, '♭');
-        abcjsHelper.getVisualObj().makeVoicesArray().forEach(arr=>{
-            arr.forEach((obj)=>{
-                let elem = obj.elem as Elem;
-                if(elem.type=="note" && elem.abcelem.midiPitches.length>0){
-                    // @ts-ignore
-                    let noteHeads:Element[] = Array.from(elem.elemset[0].childNodes).
-                    filter(n=>(n as Element).classList.contains('abcjs-notehead')); // head of notes
-                    elem.abcelem.midiPitches.forEach((el, ind)=>{
-                        if(AbcJsUtils.getPitchesArr(key).indexOf(el.pitch.toString())>-1){
-                            //(noteHeads[ind] as Element).classList.add('green');
-                            noteHeads[ind].setAttribute('color', color);
-                        }
-                    });
-                }else
-                if(elem.elemset!= undefined && elem.abcelem.el_type=="keySignature"){ // кеy # or ♭
-                    elem.abcelem.accidentals.forEach((el, ind)=>{
-                        // 'fsharp', 'bflat',
-                        if((el.note+el.acc).toLowerCase()==key.toLowerCase().replace(/#/,'sharp').replace(/♭/,'flat')){
-                            (elem.elemset[0].childNodes[ind]as Element).setAttribute('color', color);
-                        }
-                    })
-                }
-            })
-        });
-    },
-
-    paintCurrentKey(color:string){ // AbcJsUtils.paintCurrentKey('lightgreen')
-        let found = keySigns.
-            filter(obj=>obj.keys.indexOf(AbcJsUtils.getCurrentKey())>-1);
-        if(found.length>0 && found[0].signs.length>0)
-            found[0].signs.forEach(sn=>AbcJsUtils.paintKey(sn, color));
-    },
 
     downloadMidi(abc:string, a: HTMLAnchorElement) {
         a.setAttribute("href", ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" }));
         a.click();
+    },
+
+    /**
+     *
+     * @param elem базовый элемент, на x уровне которого рисуем
+     * @param pitch целевая высота целевого символа(миди нота)
+     * @param symbol символ: 'noteheads.quarter', 'accidentals.flat','accidentals.sharp' и т.д. see var glyphs in ./src/write/creation/glyphs.js
+     * @param klass
+     */
+    drawSymbolAt(renderer, elem: Elem, pitch:number, symbol:string, klass:string):SVGPathElement {
+        // первый
+        let engraverController: EngraverController = renderer.controller,
+            pitch0 = elem.abcelem.midiPitches[0].pitch,
+            x = elem.heads[0].x,
+            y0 = elem.notePositions[0].y,
+            headRect = elem.heads[0].graphelem.getBoundingClientRect(),
+            halfHeight = headRect.height/2,// полвысоты ноты
+            pitchDiff = pitch-pitch0
+        ;
+        [28,35, 40,47, 52,59, 64,71, 76,83, 88,95].forEach(key=>{ // ми,си, ми,си ...
+            if((pitch<=key && pitch0>=key+1)||(pitch0<=key && pitch>=key+1))
+                pitchDiff>0 ? pitchDiff++ : pitchDiff--; // но учитываем ми-фа и си-до
+        })
+        if (pitchDiff % 2 !== 0) {
+            pitchDiff - 1;
+        }
+        let delta = pitchDiff/2 * halfHeight; // учитываем диезы и бемоли, поэтому pitchDiff пополам
+        if(engraverController.responsive!="resize")
+            delta = delta/engraverController.scale;
+        let y = y0 - delta;
+
+        return ABCJS.glyphs.printSymbol(x, y, symbol, renderer.paper, {
+            "data-name": symbol, "data-x": x, "data-y": y, "data-w": headRect.width,
+            klass: klass
+        });
+    },
+
+    /**
+     *
+     printLine(window['lastRenderer'],
+     301, 301 + 13, 370, 0.35 + renderer.lineThickness,
+     "abcjs-ledger "+HighlightWrongCls, "ledger")
+     */
+    printLine(renderer, x1:number, x2:number, y:number, dy:number, klass:string, name:string):SVGPathElement {
+        x1 = utils.roundNumber(x1);
+        x2 = utils.roundNumber(x2);
+        let fill = renderer.foregroundColor,
+            y1 = utils.roundNumber(y - dy),
+            y2 = utils.roundNumber(y + dy);
+        // TODO-PER: This fixes a firefox bug where it isn't displayed
+        if (renderer.firefox112) {
+            y += dy / 2; // Because the y coordinate is the edge of where the line goes but the width widens from the middle.
+            let attr = {
+                x1: x1, x2: x2, y1: y, y2: y,
+                stroke: renderer.foregroundColor,
+                'stroke-width': Math.abs(dy * 2)
+            };
+            if (klass) attr['class'] = klass;
+            if (name) attr['data-name'] = name;
+            return renderer.paper.lineToBack(attr);
+        }
+        let pathString = utils.sprintf("M %f %f L %f %f L %f %f L %f %f z", x1, y1, x2, y1, x2, y2, x1, y2),
+            options = {
+            path: pathString,
+            stroke: "none",
+            fill: fill
+        };
+        if (name) options['data-name'] = name;
+        if (klass) options['class'] = klass;
+        return renderer.paper.path(options)
     }
+
 }
 
 // for AbcjsEditor
@@ -583,7 +668,7 @@ interface Elem {
     minspacing: number
     x: number
     children: any
-    heads: any
+    heads: RelativeElement[]
     extra: any[]
     extraw: number
     w: number
@@ -615,6 +700,8 @@ interface Abcelem {
     midiPitches: MidiPitch[]
 }
 
+
+
 interface Pitch {
     pitch: number
     name: string
@@ -624,13 +711,13 @@ interface Pitch {
 
 interface Abselem {
     tuneNumber: number
-    abcelem: any
+    abcelem: Abcelem
     duration: number
     durationClass: number
     minspacing: number
     x: number
     children: any
-    heads: any
+    heads: RelativeElement[]
     extra: any[]
     extraw: number
     w: number
@@ -644,6 +731,34 @@ interface Abselem {
     elemset: Elemset[]
     counters: Counters
     notePositions: NotePosition[]
+}
+
+interface RelativeElement{
+    x: number,
+    c: string, //noteheads.half, noteheads.quarter
+    dx: number,
+    w: number,
+    pitch: number,
+    scalex: number,
+    scaley: number,
+    type: string, //symbol,
+    anchor: string, // middle
+    top: number,
+    bottom: number,
+    height: number,
+    name: string, //E,
+    realWidth: number,
+    centerVertically: boolean,
+    stemDir: string, //up,
+    highestVert: number,
+    parent: Abselem,
+    graphelem: SVGPathElement
+}
+
+interface EngraverController{
+    renderer: any,
+    responsive: string, // "resize" || ""
+    scale: number
 }
 
 interface Accidental {

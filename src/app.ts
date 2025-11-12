@@ -1,6 +1,6 @@
 /**
  * @TODO
- * see "TODO midiPitches в зависимости от ключа"
+ * use scrollNext()/scrollPrev(), AbcJsUtils.paintCurrentKey('lightgreen')
  * сброс счетчика ошибок???
  * сохранение настроек
  * настройки отображения к нотам
@@ -14,6 +14,11 @@
  * убрать форшлаги {[^} ]+}
  * расставить голоса V и L по голосам
  * убрать %%scale, добавить %%measurenb 0 (?), проверить на дубли T:
+ *
+ * Чтобы запретить Chrome перехватывать ваши сочетания клавиш для управления мультимедиа, выполните следующие действия:
+ * Открыть новую вкладку Chrome по адресу chrome://flags/#hardware-media-key-handling
+ * Выбрать «Disabled» в меню в правой части страницы.
+ * Перезапустить Chrome при появлении соответствующего запроса.
  */
 
 let ABCJS,
@@ -43,8 +48,6 @@ const highlightClassName = 'highlight';
 const UnselectedNotesCls = 'unselected-notes';
 /** класс "неправильных нот", для визуализации */
 const HighlightWrongCls = 'highlight-wrong';
-/** путь к библиотеке звуков */
-const soundFontUrl =  "./midi-js-soundfonts/MusyngKite/"; // FluidR3_GM  MusyngKite
 
 // @ts-ignore
 let midiHandler = new AbcMidiHandler(paperElemId);
@@ -70,7 +73,7 @@ function setAbcjsHelper(){
     abcjsHelper.cursorOptions = {
         onEvent: (ev: CursorEvent)=>{
             if(abcjsHelper.getSynthControl().isStarted){// ev.measureStart &&
-                scrollToBeatLineTop(ev.measureNumber)
+                scrollToBeatLineTop(ev.measureNumber, false)
             }
 
             currNoteTime = ev.milliseconds;// global
@@ -150,6 +153,7 @@ function buildSheetMusicEditor(){
     //abcjsHelper.getSynthControl().restart();  // preplay
     //utils.elem('fixedDivBottom').style.display = 'block';
     resetIndicator();
+    resetCurrStartEndNote();
     showStatus('Sheet Music Rebuild');
 }
 
@@ -199,9 +203,10 @@ function clickListener(abcElem, tuneNumber, classes, analysis, drag, mouseEvent)
     });
     let clicked = '';
 
+    if(abcElem.midiPitches)
     abcElem.midiPitches.forEach(mp=>{
         let pn = (pitchNames[mp.pitch] as pitchName),
-            noteName = pn.note.length>1 && AbcJsUtils.currentIsFlat() ? pn.note[1] : pn.note[0] // midiPitches в зависимости от ключа
+            noteName = pn.note.length>1 && abcjsHelper.currentIsFlat() ? pn.note[1] : pn.note[0] // midiPitches в зависимости от ключа
         ;
         clicked+=noteName+' ('+pn.oct+') ';
     })
@@ -316,39 +321,82 @@ function unselectNotes(visualObj: IVisualObj, startNoteTime, endNoteTime){
         })
     });
 }
+function resetCurrStartEndNote(){
+    currNoteTime = -1;
+    currStartNoteTime = -1;
+    currEndNoteTime = -1;
+}
 ////////// NoteSelection
 
 /** Прокрутка нот */
 // global
 let autoScroll = true, // отключать авто-прокрутку
+    lines: MeasureLine[]=[],
     beatLines = {},// карта тактов и линий с самым высоким элементом для расчета прокрутки see initBeatLines
     scrollTopThreshold, scrollBotThreshold;
+interface MeasureLine{
+    line: number, firstMeasure: number,
+    top_elem:HTMLElement, top:number,
+    btm_elem:HTMLElement, btm:number
+}
 function initBeatLines(visualObj: IVisualObj){
+    let _lines={};
     beatLines = {};
-    let lines={};
     visualObj.makeVoicesArray().forEach(arr=>{
         arr.forEach(obj=>{
             if(!obj.elem.elemset || obj.elem.elemset.length<1) return;
             let bRect = obj.elem.elemset[0].getBoundingClientRect();
             if(bRect.left==0 ) return; // bug
-            lines[obj.line] = lines[obj.line] || {line: obj.line, top_elem:null, top:null};
-            if(lines[obj.line].top==null || bRect.top<lines[obj.line].top){
-                lines[obj.line].top = parseInt(bRect.top);
-                lines[obj.line].top_elem = obj.elem.elemset[0];
+            let line:MeasureLine = _lines[obj.line] = _lines[obj.line] || {line: obj.line, top_elem:null, top:null,
+                btm_elem:null, btm:null, firstMeasure: obj.measureNumber};
+            if(line.top==null || bRect.top<line.top){
+                line.top = parseInt(bRect.top);
+                line.top_elem = obj.elem.elemset[0];
             }
-            beatLines[obj.measureNumber] = lines[obj.line];
+            if(line.btm==null || bRect.bottom>line.btm){
+                line.btm = parseInt(bRect.bottom);
+                line.btm_elem = obj.elem.elemset[0];
+            }
+            beatLines[obj.measureNumber] = line;
         })
     });
+
+    lines  = [];
+    for (let k in _lines) lines.push(_lines[k]);
 }
-function scrollToBeatLineTop(measureNumber: number){
-    if(!autoScroll) return;
+function scrollToBeatLineTop(measureNumber: number, force: boolean){
+    if(!autoScroll && !force) return;
 
     let st  = scrollTopThreshold,
-        top = beatLines[measureNumber].top_elem.getBoundingClientRect().top;
-    if(top!==st){
+        stb = scrollBotThreshold,
+        top = beatLines[measureNumber].top_elem.getBoundingClientRect().top,
+        btm = beatLines[measureNumber].btm_elem.getBoundingClientRect().bottom
+    ;
+    if(force || top<st || (top>st && btm>stb)){
         let scrlLen = top-st;
         window.scrollBy({ top: scrlLen, left: 0, behavior: (Math.abs(scrlLen)<500 ? 'smooth' : 'auto') })
     }
+}
+
+function defineCurrentScrollLine(){
+    let st  = scrollTopThreshold;
+    for(let i=0;i<lines.length;i++){
+        let top = lines[i].top_elem.getBoundingClientRect().top;
+        if(top>st-10 && top<st+10 ) return lines[i].line;
+        if(top>st) return lines[i].line==0 ? -1 : lines[i].line;
+    }
+    return -1;
+}
+
+function scrollNext(){
+    let currentLine = defineCurrentScrollLine();
+    if(lines[currentLine+1])
+        scrollToBeatLineTop(lines[currentLine+1].firstMeasure, true);
+}
+function scrollPrev(){
+    let currentLine = defineCurrentScrollLine();
+    if(lines[currentLine-1])
+        scrollToBeatLineTop(lines[currentLine-1].firstMeasure, true);
 }
 
 function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
@@ -359,7 +407,7 @@ function buildSynthControllerAudioParams(): ISynthControllerAudioParams{
     ;
 
     return {
-        soundFontUrl: soundFontUrl,
+        soundFontUrl: window['app-options'].soundFontUrl, // see app-options.js
         drum: metronome, drumBars: 1, drumIntro: extraMeasure ? 1 : 0,
         chordsOff: true, voicesOff: onlyMetronome
     }
