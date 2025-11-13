@@ -8,6 +8,7 @@
  * undo redo lib: https://www.cssscript.com/undo-redo-history/, https://github.com/kpdecker/jsdiff/blob/master/src/diff/base.js, https://stackoverflow.com/a/79310421/2223787
  * индикация МИДИ
  * редактор: инфо по горячи клавишам
+ * редактор: кнопка открыть файл...
  * abcjsHelper.getVisualObj().makeVoicesArray()
  * https://github.com/paulrosen/abcjs/releases поверять иногда, сейчас 6.5.1(12.11.25)
  *

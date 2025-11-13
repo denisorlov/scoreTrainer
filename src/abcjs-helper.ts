@@ -390,39 +390,56 @@ let AbcJsUtils = {
         a.setAttribute("href", ABCJS.synth.getMidiFile(abc, { midiOutputType: "encoded" }));
         a.click();
     },
+    /**
+     * Расчет шагов на нотоносцах между от ноты до ноты, учитываем диезы и бемоли
+     * @param pitch1
+     * @param pitch2
+     */
+    countStepDelta(pitch1:number, pitch2:number,){
+        let pitchDiff = pitch1-pitch2;
+        [28,35, 40,47, 52,59, 64,71, 76,83, 88,95].forEach(key=>{ // ми,си, ми,си ...
+            if((pitch1<=key && pitch2>=key+1)||(pitch2<=key && pitch1>=key+1))
+                pitchDiff>0 ? pitchDiff++ : pitchDiff--; // но учитываем ми-фа и си-до
+        })
+        if ( Math.abs(pitchDiff)>1 && pitchDiff % 2 !== 0) {
+            pitchDiff--;
+        }
+        return pitchDiff/2; // учитываем диезы и бемоли, поэтому pitchDiff пополам
+    },
 
+    /** Cоотношение размеров внутри растянутого paper.svg к его исходным (натуральным) */
+    getScaleSvg(engraverController: EngraverController){
+        if(engraverController.responsive!="resize")
+            return {"scaleX": engraverController.scale, "scaleY": engraverController.scale};
+        else
+            return utils.getScaleSvg(engraverController.renderer.paper.svg);
+    },
     /**
      *
      * @param elem базовый элемент, на x уровне которого рисуем
      * @param pitch целевая высота целевого символа(миди нота)
      * @param symbol символ: 'noteheads.quarter', 'accidentals.flat','accidentals.sharp' и т.д. see var glyphs in ./src/write/creation/glyphs.js
      * @param klass
+     * @param dx delta x
      */
-    drawSymbolAt(renderer, elem: Elem, pitch:number, symbol:string, klass:string):SVGPathElement {
+    drawSymbolAt(renderer, elem: Elem, pitch:number, symbol:string, klass:string, dx?:number):SVGPathElement {
         // первый
         let engraverController: EngraverController = renderer.controller,
+            scaleSvg = AbcJsUtils.getScaleSvg(engraverController),
             pitch0 = elem.abcelem.midiPitches[0].pitch,
-            x = elem.heads[0].x,
+            x = elem.heads[0].x + (dx || 0),
             y0 = elem.notePositions[0].y,
             headRect = elem.heads[0].graphelem.getBoundingClientRect(),
-            halfHeight = headRect.height/2,// полвысоты ноты
-            pitchDiff = pitch-pitch0
+            halfHeight = utils.roundNumber(headRect.height)/2// полвысоты ноты
         ;
-        [28,35, 40,47, 52,59, 64,71, 76,83, 88,95].forEach(key=>{ // ми,си, ми,си ...
-            if((pitch<=key && pitch0>=key+1)||(pitch0<=key && pitch>=key+1))
-                pitchDiff>0 ? pitchDiff++ : pitchDiff--; // но учитываем ми-фа и си-до
-        })
-        if (pitchDiff % 2 !== 0) {
-            pitchDiff - 1;
-        }
-        let delta = pitchDiff/2 * halfHeight; // учитываем диезы и бемоли, поэтому pitchDiff пополам
-        if(engraverController.responsive!="resize")
-            delta = delta/engraverController.scale;
+        let steps = AbcJsUtils.countStepDelta(pitch, pitch0),
+            delta = steps * halfHeight / scaleSvg.scaleY+ steps * renderer.lineThickness / scaleSvg.scaleY;
         let y = y0 - delta;
 
         return ABCJS.glyphs.printSymbol(x, y, symbol, renderer.paper, {
-            "data-name": symbol, "data-x": x, "data-y": y, "data-w": headRect.width,
-            klass: klass
+            "data-name": symbol, klass: klass,
+            "data-x": x.toFixed(2), "data-y": y.toFixed(2),
+            "data-w": headRect.width.toFixed(2), "data-h": headRect.height.toFixed(2)
         });
     },
 

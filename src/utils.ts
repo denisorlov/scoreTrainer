@@ -11,6 +11,11 @@ const utils = {
         document.querySelector(selector)!.addEventListener(type, foo);
     },
 
+    /** await sleep(2000); // Ждём 2 секунды */
+    sleep: function (ms:number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
     toggle: function(selector){
         let i, elems = document.querySelectorAll(selector);
         for(i=0;i<elems.length;i++){
@@ -18,11 +23,17 @@ const utils = {
         }
     },
 
-    roundNumber: function (x) {
+    roundNumber: function (x:number) {
         return parseFloat(x.toFixed(2));
     },
     sprintf: function(template, ...args) {
         return template.replace(/%f/g, () => args.shift());
+    },
+    /** Cоотношение размеров внутри растянутого SVG к его исходным (натуральным) */
+    getScaleSvg: function (svg:SVGSVGElement){
+        let rect = svg.getBoundingClientRect(), // физический размер на экране
+            vb = svg.viewBox.baseVal;
+        return {"scaleX": rect.width / vb.width, "scaleY": rect.height / vb.height};
     },
 
     setDraggable: function (el: HTMLElement){
