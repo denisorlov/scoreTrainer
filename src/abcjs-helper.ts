@@ -445,9 +445,9 @@ let AbcJsUtils = {
 
     /**
      *
-     printLine(window['lastRenderer'],
-     301, 301 + 13, 370, 0.35 + renderer.lineThickness,
-     "abcjs-ledger "+HighlightWrongCls, "ledger")
+     printLine(ABCJS.engraverController.Renderer,
+        301, 301 + 13, 370, 0.35 + renderer.lineThickness,
+        "abcjs-ledger "+HighlightWrongCls, "ledger")
      */
     printLine(renderer, x1:number, x2:number, y:number, dy:number, klass:string, name:string):SVGPathElement {
         x1 = utils.roundNumber(x1);
@@ -476,6 +476,74 @@ let AbcJsUtils = {
         if (name) options['data-name'] = name;
         if (klass) options['class'] = klass;
         return renderer.paper.path(options)
+    },
+
+    /**
+     * Draw note with ledgers and sharp from base elem
+     * @param elem base elem
+     * @param pitch ex.: 60 = C1
+     * @param cls  ex.: "my_class"
+     * @param headSymbol default"noteheads.quarter"
+     */
+    drawNote(renderer, elem: Elem, pitch:number, cls:string, headSymbol?:string):SVGPathElement[] {
+        let res:SVGPathElement[] = [],
+            engraverController: EngraverController = renderer.controller,
+            scaleSvg = AbcJsUtils.getScaleSvg(engraverController),
+            head = AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
+                headSymbol || "noteheads.quarter", cls),
+            headX = parseFloat(head.getAttribute("data-x")||"0"),
+            headY = parseFloat(head.getAttribute("data-y")||"0"),
+            headW = parseFloat(head.getAttribute("data-w")||"0") / scaleSvg.scaleX,
+            headH = parseFloat(head.getAttribute("data-h")||"0") / scaleSvg.scaleY
+        ;
+
+        let addLedgers = function(basePitch:number, baseY:number){
+            let addBelow = AbcJsUtils.countStepDelta(pitch, basePitch)/2;
+            while(addBelow!=0){
+                res.push(AbcJsUtils.printLine(renderer,
+                    headX-3, headX + headW+5, baseY+headH*addBelow, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
+                addBelow>0 ? addBelow-- : addBelow++;
+            }
+        };
+
+        // note head
+        res.push(head);
+
+        // middle ledgers;
+        if([26,27, 29,30, 33,34, 36,37, 40,
+            //43,44, 47, 50,51, 53,54, 57,58,
+            60,61,
+            // 64, 67,68, 71, 74,75, 77,78,
+            81,82, 84,85, 88, 91,92, 95].includes(pitch)) {// on lines
+            res.push(AbcJsUtils.printLine(renderer,
+                headX-3, headX + headW+5, headY, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
+
+            if (pitch>=84)
+                addLedgers(81, headY);
+            if (pitch<=37)
+                addLedgers(40, headY);
+        }
+        // ledger below, upper notes
+        if([62,63, 83, 86,87, 89,90, 93,94, 96].includes(pitch)){
+            res.push(AbcJsUtils.printLine(renderer,
+                headX-3, headX + headW+5, headY+headH/2, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
+            if (pitch>=86)
+                addLedgers(83, headY+headH/2);
+        }
+        // ledger above, low notes
+        if([24,25, 28, 31,32, 35, 38,39, 59].includes(pitch)){
+            res.push(AbcJsUtils.printLine(renderer,
+                headX-3, headX + headW+5, headY-headH/2, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
+            if (pitch<=35)
+                addLedgers(38, headY-headH/2);
+        }
+
+        // all sharps
+        if([25,27, 30,32,34, 37,39, 42,44,46, 49,51, 54,56,58, 61,63, 66,68,70, 73,75, 78,80,82, 85,87, 90,92,94].includes(pitch))
+            res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
+                'accidentals.sharp', cls, -headW));
+
+        return res;
     }
 
 }
