@@ -790,8 +790,9 @@ function renderOne(div, tune, params, tuneNumber, lineOffset) {
     div.style.overflowY = "auto";
     div = div.children[0]; // The music should be rendered in the inner div.
   } else div.innerHTML = "";
-  var engraver_controller = window['ABCJS']['engraverController'] = new EngraverController(div, params);
-  engraver_controller.engraveABC(tune, tuneNumber, lineOffset);
+  var engraver_controller = new EngraverController(div, params);
+  if(params.clickListener) window['ABCJS']['engraverController'] = engraver_controller;
+    engraver_controller.engraveABC(tune, tuneNumber, lineOffset);
   tune.engraver = engraver_controller;
   if (params.viewportVertical || params.viewportHorizontal) {
     // If we added a wrapper around the div, then we need to size the wrapper, too.

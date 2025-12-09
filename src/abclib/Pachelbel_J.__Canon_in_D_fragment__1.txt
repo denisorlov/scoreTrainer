@@ -1,0 +1,18 @@
+X:1
+T:Canon in D (fragment)
+C:Pachelbel J.
+%%measurenb 0
+%%score { 1 | 2 }
+L:1/16
+Q:1/4=65
+M:4/4
+K:D
+V:1 treble nm="Piano" snm="Pno."
+V:2 bass
+L:1/8
+V:1
+L:1/16
+"^1" f8 e8 | d8 c8 | B8 A8 | B8"_rit." c8 ||"^5""^a tempo" [df]8 [ce]8 | [Bd]8 [Ac]8 |  [GB]8 [FA]8 | [GB]8 [Ac]8 |]
+V:2
+L:1/16
+ (D,2A,2D2F2) (A,,2E,2A,2C2) |  (B,,2F,2B,2D2) (F,,2C,2F,2A,2) |  (G,,2D,2G,2B,2)"_simile con Pedal" (D,,2A,,2D,2F,2) |  (G,,2D,2G,2B,2) (A,,2E,2A,2C2) || (D,2A,2D2F2) (A,,2E,2A,2C2) | (B,,2F,2B,2D2) (F,,2C,2F,2A,2) |  (G,,2D,2G,2B,2) (D,,2A,,2D,2F,2) | (G,,2D,2G,2B,2) (A,,2E,2A,2C2) |]

@@ -1,5 +1,9 @@
 /**
  * @TODO
+ * ======= BAGS =======
+ * список подсветки нот: не очищается ключевая(сарабанда си бемоль) и добавить кнопку для применения(а не по change)
+ *
+ * ======= BACKLOG =======
  * use scrollNext()/scrollPrev(), AbcJsUtils.paintCurrentKey('lightgreen')
  * сброс счетчика ошибок???
  * сохранение настроек
@@ -9,6 +13,8 @@
  * индикация МИДИ
  * редактор: инфо по горячи клавишам
  * редактор: кнопка открыть файл...
+ *
+ * ======= HELP INFO =======
  * abcjsHelper.getVisualObj().makeVoicesArray()
  * https://github.com/paulrosen/abcjs/releases поверять иногда, сейчас 6.5.1(12.11.25)
  *
@@ -16,6 +22,8 @@
  * убрать форшлаги {[^} ]+}
  * расставить голоса V и L по голосам
  * убрать %%scale, добавить %%measurenb 0 (?), проверить на дубли T:
+ *
+ * HTMLElementTagNameMap - классы элементов HTML в lib.dom.d.ts
  *
  * Чтобы запретить Chrome перехватывать ваши сочетания клавиш для управления мультимедиа, выполните следующие действия:
  * Открыть новую вкладку Chrome по адресу chrome://flags/#hardware-media-key-handling
@@ -50,6 +58,7 @@ const highlightClassName = 'highlight';
 const UnselectedNotesCls = 'unselected-notes';
 /** класс "неправильных нот", для визуализации */
 const HighlightWrongCls = 'highlight-wrong';
+const HighlightRightCls = 'highlight-right';
 
 // @ts-ignore
 let midiHandler = new AbcMidiHandler(paperElemId);
@@ -125,22 +134,22 @@ function prepareVoicesCheckControl(visualObj:IVisualObj){
     })
 }
 
-function buildSheetMusicPlayer(){
-    let renderObj:IVisualObj = ABCJS.renderAbc("*", getAbcText())[0];
-    prepareMetronomeText(renderObj);
-    prepareVoicesCheckControl(renderObj);
-    checkAbcjsHelper(); setAbcjsHelper();
-
-    let visualObj = abcjsHelper.renderSheetMusic(paperElemId, getAbcText());
-    abcjsHelper.createSynth(paperElemId, audioElemId, visualObj, ()=>{
-        midiHandler.initSteps(abcjsHelper.getVisualObj());
-        initBeatLines(abcjsHelper.getVisualObj());
-    });
-    utils.elem('fixedDivBottom').style.display = 'none';
-    // @ts-ignore
-    //abcjsHelper.getSynthControl().restart();
-    resetIndicator();
-}
+// function buildSheetMusicPlayer(){
+//     let renderObj:IVisualObj = ABCJS.renderAbc("*", getAbcText())[0];
+//     prepareMetronomeText(renderObj);
+//     prepareVoicesCheckControl(renderObj);
+//     checkAbcjsHelper(); setAbcjsHelper();
+//
+//     let visualObj = abcjsHelper.renderSheetMusic(paperElemId, getAbcText());
+//     abcjsHelper.createSynth(paperElemId, audioElemId, visualObj, ()=>{
+//         midiHandler.initSteps(abcjsHelper.getVisualObj());
+//         initBeatLines(abcjsHelper.getVisualObj());
+//     });
+//     utils.elem('fixedDivBottom').style.display = 'none';
+//     // @ts-ignore
+//     //abcjsHelper.getSynthControl().restart();
+//     resetIndicator();
+// }
 
 function buildSheetMusicEditor(){
     let renderObj:IVisualObj = ABCJS.renderAbc("*", getAbcText())[0];
@@ -149,8 +158,8 @@ function buildSheetMusicEditor(){
     checkAbcjsHelper();setAbcjsHelper();
 
     abcjsHelper.renderEditor(paperElemId,audioElemId,abcTextElemId, {warnings_id:'warnings'});
-    midiHandler.initSteps(abcjsHelper.getVisualObj());
     initBeatLines(abcjsHelper.getVisualObj());
+    midiHandler.initSteps(abcjsHelper.getVisualObj());
     // @ts-ignore
     //abcjsHelper.getSynthControl().restart();  // preplay
     //utils.elem('fixedDivBottom').style.display = 'block';

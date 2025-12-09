@@ -201,8 +201,8 @@ class AbcjsHelper {
     }
 
     paintCurrentKey(color:string){ // AbcJsUtils.paintCurrentKey('lightgreen')
-        let found = keySigns.
-        filter(obj=>obj.keys.indexOf(this.getCurrentKey())>-1);
+        let found = keySigns
+            .filter(obj=>obj.keys.indexOf(this.getCurrentKey())>-1);
         if(found.length>0 && found[0].signs.length>0)
             found[0].signs.forEach(sn=>this.paintKey(sn, color));
     }
@@ -264,12 +264,12 @@ function CursorControl(paperElemId: string, _cursorOptions?: ICursorOptions) {
         if (ev.measureStart && ev.left === null)
             return; // this was the second part of a tie across a measure line. Just ignore it.
 
-        removeClassFromPaper(paperElemId, "highlight");
+        removeClassFromPaper(paperElemId, highlightClassName);
 
         for (var i = 0; i < ev.elements.length; i++ ) {
             var note = ev.elements[i];
             for (var j = 0; j < note.length; j++) {
-                note[j].classList.add("highlight");
+                note[j].classList.add(highlightClassName);
             }
         }
 
@@ -292,9 +292,9 @@ function CursorControl(paperElemId: string, _cursorOptions?: ICursorOptions) {
     self.onFinished = function() {
         // var els = document.querySelectorAll("svg .highlight");
         // for (var i = 0; i < els.length; i++ ) {
-        //     els[i].classList.remove("highlight");
+        //     els[i].classList.remove(highlightClassName);
         // }
-        removeClassFromPaper(paperElemId, "highlight");
+        removeClassFromPaper(paperElemId, highlightClassName);
 
         var cursor = document.querySelector("#"+paperElemId+" svg .abcjs-cursor");
         if (cursor) {
@@ -325,6 +325,8 @@ const allPitches = [
     "c'''", "d'''", "e'''", "f'''", "g'''", "a'''", "b'''",
     "c''''", "d''''", "e''''", "f''''", "g''''", "a''''", "b''''"
 ];
+// диезы бемоли
+const alteredNotes = [25,27, 30,32,34, 37,39, 42,44,46, 49,51, 54,56,58, 61,63, 66,68,70, 73,75, 78,80,82, 85,87, 90,92,94];
 
 let AbcJsUtils = {
     moveNote: function(note, step) {
@@ -396,13 +398,20 @@ let AbcJsUtils = {
      * @param pitch2
      */
     countStepDelta(pitch1:number, pitch2:number,){
+        if(pitch1==pitch2) return 0; // равны
+        if(alteredNotes.includes(pitch1)) // упрощаем до белых клавиш
+            pitch1 = abcjsHelper.currentIsFlat() ? pitch1+1 : pitch1-1;
+        if(alteredNotes.includes(pitch2))
+            pitch2 = abcjsHelper.currentIsFlat() ? pitch2+1 : pitch2-1;
         let pitchDiff = pitch1-pitch2;
         [28,35, 40,47, 52,59, 64,71, 76,83, 88,95].forEach(key=>{ // ми,си, ми,си ...
-            if((pitch1<=key && pitch2>=key+1)||(pitch2<=key && pitch1>=key+1))
+            if((pitch1<=key && pitch2>=key+1) || (pitch1<=key-1 && pitch2>=key)
+                ||(pitch2<=key && pitch1>=key+1) ||(pitch2<=key-1 && pitch1>=key)
+            )
                 pitchDiff>0 ? pitchDiff++ : pitchDiff--; // но учитываем ми-фа и си-до
         })
         if ( Math.abs(pitchDiff)>1 && pitchDiff % 2 !== 0) {
-            pitchDiff--;
+            pitchDiff>0 ? pitchDiff-- : pitchDiff++;
         }
         return pitchDiff/2; // учитываем диезы и бемоли, поэтому pitchDiff пополам
     },
@@ -435,6 +444,26 @@ let AbcJsUtils = {
         let steps = AbcJsUtils.countStepDelta(pitch, pitch0),
             delta = steps * halfHeight / scaleSvg.scaleY+ steps * renderer.lineThickness / scaleSvg.scaleY;
         let y = y0 - delta;
+
+        return ABCJS.glyphs.printSymbol(x, y, symbol, renderer.paper, {
+            "data-name": symbol, klass: klass,
+            "data-x": x.toFixed(2), "data-y": y.toFixed(2),
+            "data-w": headRect.width.toFixed(2), "data-h": headRect.height.toFixed(2)
+        });
+    },
+
+    /** пытаемся нарисовать поверх подобного по высоте(midiPitch) символа */
+    tryDrawSymbolEqualPitch(renderer, elem: Elem, pitch:number, symbol:string, klass:string, dx?:number):SVGPathElement|null {
+        let ind = -1; // ищем индекс аналогичной midiPitch
+        elem.abcelem.midiPitches.forEach((mp, index)=>{
+            if(mp.pitch==pitch) ind = index;
+        })
+        if(ind<0) return null;// не получилось
+
+        let x = elem.heads[ind].x + (dx || 0),
+            y = elem.notePositions[ind].y,
+            headRect = elem.heads[ind].graphelem.getBoundingClientRect()
+        ;
 
         return ABCJS.glyphs.printSymbol(x, y, symbol, renderer.paper, {
             "data-name": symbol, klass: klass,
@@ -483,14 +512,22 @@ let AbcJsUtils = {
      * @param elem base elem
      * @param pitch ex.: 60 = C1
      * @param cls  ex.: "my_class"
-     * @param headSymbol default"noteheads.quarter"
+     * @param headSymbol default"noteheads.quarter", 'noteheads.whole', 'noteheads.half'
      */
     drawNote(renderer, elem: Elem, pitch:number, cls:string, headSymbol?:string):SVGPathElement[] {
         let res:SVGPathElement[] = [],
-            engraverController: EngraverController = renderer.controller,
+            dur = elem.abcelem.duration,
+            elHeadSymbol = "noteheads." + (dur==1 ? "whole" : (dur==0.5 ? "half" : "quarter")),
+            tryHead = AbcJsUtils.tryDrawSymbolEqualPitch(renderer, elem, pitch, headSymbol || elHeadSymbol, cls);
+        if(tryHead!=null){
+            res.push(tryHead);
+            return res;
+        }
+
+        let engraverController: EngraverController = renderer.controller,
             scaleSvg = AbcJsUtils.getScaleSvg(engraverController),
             head = AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
-                headSymbol || "noteheads.quarter", cls),
+                headSymbol || elHeadSymbol, cls),
             headX = parseFloat(head.getAttribute("data-x")||"0"),
             headY = parseFloat(head.getAttribute("data-y")||"0"),
             headW = parseFloat(head.getAttribute("data-w")||"0") / scaleSvg.scaleX,
@@ -498,7 +535,7 @@ let AbcJsUtils = {
         ;
 
         let addLedgers = function(basePitch:number, baseY:number){
-            let addBelow = AbcJsUtils.countStepDelta(pitch, basePitch)/2;
+            let addBelow = AbcJsUtils.countStepDelta(pitch, basePitch);// /2
             while(addBelow!=0){
                 res.push(AbcJsUtils.printLine(renderer,
                     headX-3, headX + headW+5, baseY+headH*addBelow, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
@@ -538,10 +575,15 @@ let AbcJsUtils = {
                 addLedgers(38, headY-headH/2);
         }
 
-        // all sharps
-        if([25,27, 30,32,34, 37,39, 42,44,46, 49,51, 54,56,58, 61,63, 66,68,70, 73,75, 78,80,82, 85,87, 90,92,94].includes(pitch))
+        if(alteredNotes.includes(pitch))
             res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
-                'accidentals.sharp', cls, -headW));
+                abcjsHelper.currentIsFlat() ? 'accidentals.flat' : 'accidentals.sharp',
+                cls, -headW));
+
+        // all sharps
+        // if([25,27, 30,32,34, 37,39, 42,44,46, 49,51, 54,56,58, 61,63, 66,68,70, 73,75, 78,80,82, 85,87, 90,92,94].includes(pitch))
+        //     res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
+        //         'accidentals.sharp', cls, -headW));
 
         return res;
     }

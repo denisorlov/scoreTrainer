@@ -11,7 +11,7 @@ class AbcMidiHandler implements IMidiHandler{
     startIdx: number = 0;
     endIdx: number = 0;
     currIdx: number = 0;
-    private _prevIdx: number = 0;
+
     private _wrongNote= 0;
     private _rightNote= 0;
     public noteArr: TimeStep[] = [];
@@ -21,10 +21,15 @@ class AbcMidiHandler implements IMidiHandler{
 
     private _maxWrongNotes = 4;
     private _prizeRightNotes = 5;
+    /** карта ошибок такта: номер такта: кол-во ошибок */
+    private _measureWrongNote= {};
     private _onWrongNotes = (pitch:number)=>{};
-    private _onRightNotes = (pitch:number)=>{};
+    private _onRightNotes = (pitch:number, idx: number)=>{};
     private _onNoteOff = (pitch:number)=>{};
-    private _onTimeStepDone = (currIdx:number)=>{};
+    /** При выполнении шага */
+    private _onTimeStepDone = (stepIdx:number, step:TimeStep)=>{};
+    /** При очистке выполнения шага */
+    private _onTimeStepDoneReset = (stepIdx:number, step:TimeStep)=>{};
     private _onAllDoneNoteOff = ()=>{};
     /** Все ноты элемента выполнены */
     private _onAllElementNotesDone = (elem: Elem)=>{};
@@ -35,7 +40,7 @@ class AbcMidiHandler implements IMidiHandler{
     private _onSetToStart = (allDone?: boolean)=>{};
 
 
-    private _allDone = false;
+    private _allDone = -1;
 
 
     constructor(paperElemId: string) {
@@ -109,17 +114,23 @@ class AbcMidiHandler implements IMidiHandler{
 
     noteOn(pitch: number, velocity: number){
         if(this.noteArr.length<1) return;
-        let currTimeStep: TimeStep = this.noteArr[this.currIdx];
-        let ok = this._checkStep(currTimeStep, pitch);
-        if(!ok){
-            if(this.currIdx>0 && this._checkStep(this.noteArr[this._prevIdx], pitch)){
-                return; // это ноты предыдышего шага, не считаем за ошибку, музыкант закрепяет пройденное )
+        let currTimeStep: TimeStep = this.getCurrentStep(), measure = this.getMeasure();
+        if(!this._checkStep(currTimeStep, pitch)){
+            let stop= false, _prevIdx = this.currIdx;
+            while(_prevIdx>this.startIdx && !stop){ // это ноты предыдушего шага
+                _prevIdx--;
+                if(measure > this.getMeasure(_prevIdx)+1){// не далее текущего и пред-го такта
+                    stop = true;
+                }else
+                if(this._checkStep(this.noteArr[_prevIdx], pitch)){
+                    this._onRightNotes(pitch, _prevIdx);
+                    return; // не считаем за ошибку, музыкант закрепяет пройденное или затакт
+                }
             }
-            this._wrongNote++;
+            if(this._wrongNote<this._maxWrongNotes)
+                this._wrongNote++;
+            this._addMeasureWrongNote();
             this._onWrongNotes(pitch);
-            if(this._wrongNote>this._maxWrongNotes){
-                this.setToStart(); // new try
-            }
             return;
         }else{
             this._rightNote++;
@@ -127,32 +138,36 @@ class AbcMidiHandler implements IMidiHandler{
                 this._rightNote = 0;
                 if(this._wrongNote>0) this._wrongNote--; // приз за старание
             }
-            this._onRightNotes(pitch);
+            this._onRightNotes(pitch, this.currIdx); // тут может измениться текущий шаг
         }
-        let checkDone = this.checkDone(currTimeStep.elems);
-        if(checkDone){
-            this._onTimeStepDone(this.currIdx);
-            this._prevIdx = this.currIdx;
-            this.currIdx++;
-            if(this._checkVoices.length>0 && this.currIdx<=this.endIdx){
-                let intersection = this.getStepVoices(this.currIdx).filter(value => this._checkVoices.includes(value)); // https://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
-                while(this.currIdx<=this.endIdx && intersection.length<1){// пока нет голосов для проверки
-                    this.currIdx++;
-                    intersection = this.getStepVoices(this.currIdx).filter(value => this._checkVoices.includes(value));
-                };
-            }
-            if(this.currIdx>this.endIdx){
-                this._allDone = true;// все сделано
-                this.setToStart(true);
-            }
+        let currIdx = this.getCurrentIndex(); // запоминаем текущий индекс
+        currTimeStep = this.getCurrentStep();// перечитываем текущий шаг, он мог быть сдвинут на _onRightNotes
+        if(this.checkDone(currTimeStep.elems)){ // если шаг выполнен
+            this._onTimeStepDone(this.currIdx, currTimeStep); // тут может измениться текущий индекс/шаг
+            // если индекс/шаг не изменился, автоматически переходим к следующему...
+            if(currIdx==this.currIdx){
+                currIdx++;
+                if(this._checkVoices.length>0 && currIdx<=this.endIdx){ // перемещение currIdx по отключенным голосам
+                    let intersection = this.getStepVoices(currIdx).filter(value => this._checkVoices.includes(value)); // https://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+                    while(currIdx<=this.endIdx && intersection.length<1){// пока нет голосов для проверки
+                        currIdx++;
+                        intersection = this.getStepVoices(currIdx).filter(value => this._checkVoices.includes(value));
+                    };
+                }
+            }else
+                currIdx=this.currIdx;
+            if(currIdx>this.endIdx){
+                this._allDone = pitch;// флаг все сделано
+            }else
+                this.currIdx=currIdx;
         }
     }
 
     noteOff(pitch: number): void {
         this._onNoteOff(pitch);
-        if(this._allDone){
+        if(this._allDone==pitch){
             this._onAllDoneNoteOff();
-            this._allDone = false;
+            this._allDone = -1;
         }
     }
 
@@ -160,12 +175,25 @@ class AbcMidiHandler implements IMidiHandler{
         this._wrongNote = 0;
         this._rightNote = 0;
         this.currIdx = this.startIdx;
+        this._resetMeasureWrongNote();
         this.resetAllDone();
     }
 
     setToStart(allDone?: boolean){
         this._setToStartPrivate();
         this._onSetToStart(allDone);
+    }
+
+    getMeasureWrongNote(measure?: number):number{
+        measure = measure!=undefined ? measure : this.getMeasure();
+        return this._measureWrongNote[measure] = this._measureWrongNote[measure] ? this._measureWrongNote[measure] : 0;
+    }
+    _addMeasureWrongNote(measure?: number){
+        measure = measure!=undefined ? measure : this.getMeasure();
+        this._measureWrongNote[measure] = this.getMeasureWrongNote(measure)+1;
+    }
+    _resetMeasureWrongNote(){
+        this._measureWrongNote = {};
     }
 
     /** Проверка ноты в рамках шага-времени  */
@@ -214,14 +242,14 @@ class AbcMidiHandler implements IMidiHandler{
     /** Сброс всех выполненых */
     resetAllDone(): number{
         let cnt = 0;
-        this.noteArr.forEach(timeStep=>{
-            cnt+=this.resetStepDone(timeStep);
+        this.noteArr.forEach((timeStep, idx)=>{
+            cnt+=this.resetStepDone(idx, timeStep);
         })
         return cnt;
     }
 
     /** Сброс выполненых в рамках шага-времени  */
-    resetStepDone(timeStep: TimeStep): number{
+    resetStepDone(idx: number, timeStep: TimeStep): number{
         let cnt = 0;
         timeStep.elems.forEach(elem=>{
             elem.abcelem.midiPitches.forEach(mp=>{
@@ -231,7 +259,48 @@ class AbcMidiHandler implements IMidiHandler{
                 }
             })
         })
+        this._onTimeStepDoneReset(idx, timeStep);
         return cnt;
+    }
+
+    /** Сбросить пройденный шаг, перейти на шаг назад, возвращает текущий шаг */
+    resetStepBack(){
+        // сбрасываем текущий шаг
+        this.resetStepDone(this.currIdx, this.getStep(this.currIdx));
+        // если можно двигаться назад в рамках начала выделения(startIdx)
+        if(this.currIdx>this.startIdx){
+            this.currIdx--;
+            this.resetStepDone(this.currIdx, this.getStep(this.currIdx));
+        }
+        if(this.isMeasureStart()){ // если начало такта
+            this._resetMeasureWrongNote(); // сброс ошибок такта
+        }
+        return this.currIdx;
+    }
+
+    /** Сбросить пройденный такт, возвращает текущий такт */
+    resetMeasureDone(keepMeasure?:boolean){
+        let currMeasure = this.getMeasure();
+        // сбрасываем текущий шаг
+        this.resetStepDone(this.currIdx, this.getStep(this.currIdx));
+        if(this.isMeasureStart()){ // если начало такта
+            this._resetMeasureWrongNote(); // сброс ошибок такта
+            if(keepMeasure)
+                return currMeasure; // удерживать текущий такт
+        }
+        // если текущий шаг первый шаг такта - сбрасываем шаг в конце пред-го такта, переходим в предю такт
+        if(this.currIdx>this.startIdx && this.getStep(this.currIdx-1).measureNumber==currMeasure-1){
+            this.currIdx--;
+            this.resetStepDone(this.currIdx, this.getStep(this.currIdx));
+            currMeasure--;
+        }
+        // сбрасываем текущий шаг, пока можно двигаться назад в рамках начала выделения(startIdx) и такта...
+        while(this.currIdx>this.startIdx && this.getStep(this.currIdx-1).measureNumber==currMeasure){
+            this.currIdx--;
+            this.resetStepDone(this.currIdx, this.getStep(this.currIdx));
+        }
+        this._resetMeasureWrongNote(); // сброс ошибок такта
+        return currMeasure;
     }
 
     getCurrentIndex(){
@@ -243,6 +312,22 @@ class AbcMidiHandler implements IMidiHandler{
 
     getStep(index: number): TimeStep {
         return this.noteArr[index];
+    }
+
+    getCurrentStep(){
+        return this.getStep(this.currIdx);
+    }
+
+    getMeasure(index?: number){
+        return this.getStep(index!=undefined? index : this.currIdx).measureNumber;
+    }
+
+    isMeasureStart(){
+        return this.currIdx==this.startIdx || this.getMeasure()>this.getMeasure(this.currIdx-1);
+    }
+
+    isMeasureEnd(){
+        return this.currIdx==this.endIdx  || this.getMeasure()<this.getMeasure(this.currIdx+1);
     }
 
     getStepVoices(index: number): number[] {
@@ -293,7 +378,7 @@ class AbcMidiHandler implements IMidiHandler{
         this._onWrongNotes = foo;
     }
 
-    set onRightNotes(foo: (pitch: number) => void) {
+    set onRightNotes(foo: (pitch: number, idx: number) => void) {
         this._onRightNotes = foo;
     }
 
@@ -301,8 +386,12 @@ class AbcMidiHandler implements IMidiHandler{
         this._onNoteOff = value;
     }
 
-    set onTimeStepDone(value: (currIdx:number) => void) {
+    set onTimeStepDone(value: (stepIdx:number, step:TimeStep) => void) {
         this._onTimeStepDone = value;
+    }
+
+    set onTimeStepDoneReset(value: (stepIdx: number, step: TimeStep) => void) {
+        this._onTimeStepDoneReset = value;
     }
 
     set onAllDoneNoteOff(value: () => void) {

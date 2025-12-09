@@ -14,6 +14,7 @@ let abcLibPaths = [
     ,"Vivaldi_A.__Four_Seasons_Winter_1_movement__2.txt"
     ,"Vivaldi_A.__Four_Seasons_Autumn__1.txt"
     ,"Schubert_F.__Waltz_in_B_minor__1.txt"
+    ,"Pachelbel_J.__Canon_in_D_fragment__1.txt"
     ,"Pachelbel_J.__Canon_in_D__2.txt"
     ,"Mozart_W.A.__Symphony_40_1__3.txt"
     ,"Mozart_W.A.__Rondo_alla_Turca__2.txt"
@@ -54,6 +55,7 @@ let abcLibUtils = {
             });
         })
     },
+    // not used
     initSelect: function (select: HTMLSelectElement, onchange: (ev: Event)=>void){
         abcLibUtils.initAbcLibIndex();
         abcLibIndex.forEach(it=>{

@@ -68,6 +68,7 @@ function setSelectAbcText(){
         let value = (ev.target as HTMLSelectElement).value;
         if(!value) return;
         (ev.target as HTMLSelectElement).title = value;
+        (ev.target as HTMLSelectElement).blur();//removing the focus of an select
         fetch('./src/abclib/'+value)
             .then(response => {
                 // Проверяем, успешно ли выполнен запрос (статус в диапазоне 200–299)
@@ -84,8 +85,9 @@ function setSelectAbcText(){
                 buildSheetMusicEditor();//buildSheetMusicPlayer();
             })
             .catch(error => {
-                // Обрабатываем ошибки, возникшие при выполнении запроса
-                showStatus('Fetch error:'+ error);
+                // Обрабатываем ошибки, возникшие при выполнении
+                showStatus('Error:'+ error);
+                console.error(error);
             });
     }, utils.elemType('selectGroupAbc', HTMLSelectElement));
 }
@@ -96,10 +98,11 @@ function initSelectPaintKeys(){
     select.addEventListener('change', (ev)=>{
         let value = (ev.target as HTMLSelectElement).value;
         switch(value) {
-            case 'no': abcjsHelper.clearAllPaint();
-            case 'key': abcjsHelper.paintCurrentKey('lightgreen');
+            case 'no': abcjsHelper.clearAllPaint();break;
+            case 'key': abcjsHelper.paintCurrentKey('lightgreen');break;
             default: abcjsHelper.paintKey(value, 'lightgreen');
         }
+        ev.target.blur();//removing the focus of an select
     });
 }
 
@@ -269,21 +272,28 @@ function setKeydown(){
     document.addEventListener('keydown', (event)=>{
         let key = event.code,
             prev = false,
-            bindKeysScroll =utils.elemType('bindKeysScroll', HTMLInputElement).checked;
+            bindKeysScroll =utils.elemType('bindKeysScroll', HTMLInputElement).checked,
+            bindKeysMeasureBack =utils.elemType('bindKeysMeasureBack', HTMLInputElement).checked,
+            bindKeysStepBack =utils.elemType('bindKeysStepBack', HTMLInputElement).checked;
         // bindKeysScroll
         switch(key) {
             // case 'Space': // backspace
             //     utils.elem('playButton').click(); prev = true; break;
-            // case 'ArrowUp': // up narrow
-            //     utils.elem('fasterButton').click(); prev = true; break;
-            // case 'ArrowDown': // down narrow
+            case 'ArrowUp': // up narrow
+                if(bindKeysMeasureBack){utils.elemType('measureBackButton', HTMLButtonElement).click(); prev = true;} break;
+                 //utils.elem('fasterButton').click(); prev = true; break;
+            case 'ArrowDown': // down narrow
+                if(bindKeysStepBack){utils.elemType('stepBackButton', HTMLButtonElement).click(); prev = true;} break;
             //     utils.elem('slowerButton').click(); prev = true; break;
             case 'ArrowRight': // up right
                 if(bindKeysScroll){scrollNext(); prev = true;} break;
             case 'ArrowLeft': // down left
                 if(bindKeysScroll){scrollPrev(); prev = true;} break;
         }
-        prev === true ? event.preventDefault() : 0;
+        if(prev){
+            event.preventDefault();
+            //event.stopPropagation();
+        }
     });
 }
 
@@ -297,29 +307,36 @@ function setWrongNotesIndicator(){
         midiHandler.prizeRightNotes = (ev.target as HTMLMeterElement).value;
     });
     midiHandler.onWrongNotes = (pitch)=>{
-        console.warn('Wrong note: '+pitch);
-        if(midiHandler.wrongNote>midiHandler.maxWrongNotes){
-            resetIndicator();
-        }else{
-            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Wrong:' + midiHandler.wrongNote);
-            highlightWrongNote(pitch);
-        }
-        scrollByMidiHandlerSteps();
+        console.warn('Wrong note: ' + pitch);
+        highlightNote(pitch, 4000, false); // wrong
+        if(midiHandler.getMeasureWrongNote()>=elemType('restartErrors', HTMLMeterElement).value)
+            midiHandler.resetMeasureDone(true);//рестартуем такт на restartErrors ошибок такта
+        resetIndicator();
     };
-    midiHandler.onRightNotes = (pitch)=>{
+    midiHandler.onRightNotes = (pitch, idx: number)=>{
         console.info('Right note: '+pitch);
-        if(midiHandler.wrongNote<1){
-            resetIndicator();
-        }else{
-            setIndicator("swmIndicator", midiHandler.wrongNote*100/midiHandler.maxWrongNotes, 'Wrong:' + midiHandler.wrongNote);
-        }
+        highlightNote(pitch, 4000, true, idx); // right
         scrollByMidiHandlerSteps();
+        resetIndicator();
     };
     midiHandler.onNoteOff = (pitch)=>{
-
+        if(drownMap[pitch]){ // стираем ложные при отпускании
+            (drownMap[pitch] as SVGPathElement[]).forEach(el=>el.remove());
+        }
     }
-    midiHandler.onTimeStepDone = (currIdx)=>{
-        console.log('Time Step is done at index '+currIdx);
+    midiHandler.onTimeStepDone = (stepIdx, step:TimeStep)=>{
+        if(midiHandler.isMeasureEnd() && midiHandler.getMeasureWrongNote()>=elemType('repeatErrors', HTMLMeterElement).value){
+            showStatus('Start again measure: '+(midiHandler.getMeasure()+1));
+            midiHandler.resetMeasureDone(true);// сбрасываем такт если были ошибки в такте
+        }else
+        console.log('Time Step is done at index '+stepIdx);
+    };
+    midiHandler.onTimeStepDoneReset = (stepIdx, step:TimeStep)=>{
+        step.elems.forEach(elem=>{
+            elem.elemset.forEach(element=>{
+                element.classList.remove(highlightClassName);// очистка подстветки
+            })
+        });
     };
     midiHandler.onSetToStart = (allDone)=>{
         if(!allDone){
@@ -327,6 +344,7 @@ function setWrongNotesIndicator(){
         }
     };
     midiHandler.onAllDoneNoteOff = ()=>{
+        midiHandler.setToStart(true);
         settingToStart();
     };
     midiHandler.onAllElementNotesDone = (elem: Elem)=>{
@@ -341,57 +359,97 @@ function setWrongNotesIndicator(){
         showStatus('Контроль нот выставлен в начало фрагмента');
         midiHandler.setToStart(false);
         resetIndicator();
-    })
+    });
+    utils.addListener('click', '#measureBackButton', (ev)=>{
+        if(!midiHandler.getEndStep()){
+            showStatus('Нотный набор не загружен'); return;
+        }
+        showStatus('Контроль нот выставлен в начало такта ' + (midiHandler.resetMeasureDone()+1));
+        scrollByMidiHandlerSteps();
+    });
+    utils.addListener('click', '#stepBackButton', (ev)=>{
+        if(!midiHandler.getEndStep()){
+            showStatus('Нотный набор не загружен'); return;
+        }
+        showStatus('Контроль нот выставлен на шаг ' + (midiHandler.resetStepBack()+1));
+        scrollByMidiHandlerSteps();
+    });
 }
 function setIndicator(elemId: string, percent: number, label: string){
     let swmIndicator = document.getElementById(elemId)!;
     swmIndicator.style.width = percent+'%';
     swmIndicator.innerHTML = label;
 }
-function resetIndicator(){setIndicator("swmIndicator", 0, '&nbsp;')}
+
+function resetIndicator(){
+    //setIndicator("swmIndicator", 0, '&nbsp;')
+    //utils.elemType('currMeasure', HTMLSpanElement).innerHTML = midiHandler.getMeasure()+1
+    let wrongNote = midiHandler.getMeasureWrongNote(),
+        needRestart = wrongNote>=elemType('restartErrors', HTMLMeterElement).value-1,
+        needRepeat = wrongNote>=elemType('repeatErrors', HTMLMeterElement).value,
+        color = (wrongNote<1 ? 'inherit': ( needRepeat || needRestart ? 'red' : 'orange') );
+    utils.elemType('currMeasureWrong', HTMLSpanElement).innerHTML =
+        '<b style="color: '+color+'">'+wrongNote+'</b>';
+    document.querySelectorAll('.abcjs-bar').forEach(el=>{
+        (el as SVGPathElement).style.color = color;
+    });
+
+    //utils.elemType('totalWrong', HTMLSpanElement).innerHTML = midiHandler.wrongNote;
+}
 
 function scrollByMidiHandlerSteps(){
-    let currentIndex = midiHandler.getCurrentIndex(),
-         nextIndex = midiHandler.getNextIndex(),
-         index = nextIndex<currentIndex ? nextIndex : currentIndex // to begin or continue
-    ;
-
-    scrollToBeatLineTop(midiHandler.getStep(index).measureNumber, false)
+    if(midiHandler.getMeasureWrongNote()>=elemType('repeatErrors', HTMLMeterElement).value)// need repeat
+        return;
+    let currMeasure = midiHandler.getMeasure(),
+        nextIndexMeasure = midiHandler.getMeasure(midiHandler.getNextIndex());
+    scrollToBeatLineTop(nextIndexMeasure!=currMeasure ? nextIndexMeasure : currMeasure, false)
 }
 function settingToStart(){
-    removeClassFromPaper(paperElemId, highlightClassName);
+    //removeClassFromPaper(paperElemId, highlightClassName);
     scrollByMidiHandlerSteps()
     resetIndicator();
 }
-function highlightWrongNote(pitch:number, durationMs?: number) { //@TODO how to draw Wrong Note dynamically?
-    let note = (pitchNames[pitch]as pitchName),
-        noteName = note.note.length>1 && abcjsHelper.currentIsFlat() ? note.note[1] : note.note[0] // midiPitches в зависимости от ключа
-    ;
-    showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+noteName+' (окт: '+note.oct+')</span>');
+// карта нарисованных нот
+let drownMap = {};
+function highlightNote(pitch:number, durationMs?: number, right?:boolean, idx?:number) { //@TODO how to draw Wrong Note dynamically?
+    if(!right){
+        let note = (pitchNames[pitch]as pitchName),
+            noteName = note.note.length>1 && abcjsHelper.currentIsFlat() ? note.note[1] : note.note[0] // midiPitches в зависимости от ключа
+        ;
+        showStatus('<span style="color: orange;font-weight: bold">Ошибка: '+noteName+' (окт: '+note.oct+')</span>');
+    }
+
     //-------------------
-    let min = 1000, elemForHighlightWrongCls: Elem|null = null,
-        step: TimeStep = midiHandler.getStep(midiHandler.getCurrentIndex());
+    let min = 1000, baseElem: Elem|null = null, // опорный элемент
+        step: TimeStep = midiHandler.getStep(idx!=undefined ? idx : midiHandler.getCurrentIndex());
     step.elems.forEach(elem=>{
         elem.abcelem.midiPitches.forEach(mp=>{
             let newMin = Math.abs(mp.pitch-pitch);// ищем ближайший набор фальшивой ноте
             if(newMin<min){
                 min = newMin;
-                elemForHighlightWrongCls = elem;
+                baseElem = elem;
             }
         })
     })
-    // if(elemForHighlightWrongCls!=null)
-    //     (elemForHighlightWrongCls as Elem).elemset.forEach(element=>{ // красим элемент
+    // if(baseElem!=null)
+    //     (baseElem as Elem).elemset.forEach(element=>{ // красим элемент
     //         element.classList.add(HighlightWrongCls);
     //     })
     // setTimeout( ()=>{removeClassFromPaper(paperElemId, HighlightWrongCls)}, durationMs || 1000);
-    if(elemForHighlightWrongCls!=null){
+    if(baseElem!=null){
         let engraverController: EngraverController = ABCJS.engraverController,
-            wrongSet = AbcJsUtils.drawNote(engraverController.renderer, elemForHighlightWrongCls, pitch, HighlightWrongCls);
+            drownSet = AbcJsUtils.drawNote(engraverController.renderer, baseElem, pitch,
+                right? HighlightRightCls :HighlightWrongCls
+            );
+        //if(!right)
+            drownMap[pitch] = drownSet;// ложные сохраняем в карту
         setTimeout( ()=>{
-            wrongSet.forEach(el=>el.remove());
-        }, durationMs || 1000);
+            drownSet.forEach(el=>el.remove());
+        }, durationMs || 1500);
     }
+}
+function highlightRightNote(pitch:number, durationMs?: number){
+    //highlight-right
 }
 //////// played notes
 class PlayedNote {
@@ -412,7 +470,7 @@ class PlayedNoteView {
 
     addNote(pitch:number, right: boolean){
         let pn = (pitchNames[pitch] as pitchName),
-            abcNote = pn.note.length>1 && abcjsHelper.currentIsFlat() ? pn.abc[1] : pn.abc[0] // midiPitches в зависимости от ключа
+            abcNote = pn.note.length>1 && abcjsHelper.getSynthControl() && abcjsHelper.currentIsFlat() ? pn.abc[1] : pn.abc[0] // midiPitches в зависимости от ключа
         ;
         this.playedNotes[pitch] = new PlayedNote(pitch, abcNote, right);
         this.renderPlayedNote();
@@ -489,6 +547,8 @@ function initElems(elems) {
     elems.tempoWarp = utils.elem('tempoWarp');
     elems.metronomeUse = utils.elem('metronomeUse');
     elems.metronomeOnlyUse = utils.elem('metronomeOnlyUse');
+    elems.restartErrors = utils.elem('restartErrors');
+    elems.repeatErrors = utils.elem('repeatErrors');
     //elems.extraMeasure = utils.elem('extraMeasure');
 }
 
