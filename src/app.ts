@@ -145,6 +145,7 @@ function prepareVoicesCheckControl(visualObj:IVisualObj){
 //         midiHandler.initSteps(abcjsHelper.getVisualObj());
 //         initBeatLines(abcjsHelper.getVisualObj());
 //     });
+//     utils.toggle('#playerTempoButtonSpan');
 //     utils.elem('fixedDivBottom').style.display = 'none';
 //     // @ts-ignore
 //     //abcjsHelper.getSynthControl().restart();
@@ -158,6 +159,7 @@ function buildSheetMusicEditor(){
     checkAbcjsHelper();setAbcjsHelper();
 
     abcjsHelper.renderEditor(paperElemId,audioElemId,abcTextElemId, {warnings_id:'warnings'});
+    utils.toggle('#playerTempoButtonSpan');
     initBeatLines(abcjsHelper.getVisualObj());
     midiHandler.initSteps(abcjsHelper.getVisualObj());
     // @ts-ignore

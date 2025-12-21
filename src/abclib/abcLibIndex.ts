@@ -20,7 +20,7 @@ let abcLibPaths = [
     ,"Mozart_W.A.__Rondo_alla_Turca__2.txt"
     ,"Mozart_W.A.__Eine_kleine_Nachtmusik_fragment__3.txt"
     ,"Marx_R.__Right_here_waiting_for_you__1.txt"
-    ,"Mangini_H.__Moon_River__1.txt"
+    ,"Mangini_H.__Moon_River__2.txt"
     ,"Joplin_S.__Maple_Leaf_Rag__2.txt"
     ,"Joplin_S.__Entertainer__2.txt"
     ,"Handel_J.__Sarabande__1.txt"

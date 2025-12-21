@@ -4,7 +4,7 @@
 	height: 26px;
 	padding: 0 5px;
 	border-radius: 3px;
-	background-color: #424242;
+	background-color: slategray; /*#424242;*/
 	display: flex;
 	align-items: center;
 	box-sizing: border-box;

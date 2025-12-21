@@ -442,7 +442,7 @@ let AbcJsUtils = {
             halfHeight = utils.roundNumber(headRect.height)/2// полвысоты ноты
         ;
         let steps = AbcJsUtils.countStepDelta(pitch, pitch0),
-            delta = steps * halfHeight / scaleSvg.scaleY+ steps * renderer.lineThickness / scaleSvg.scaleY;
+            delta = steps * halfHeight / scaleSvg.scaleY - steps * 0.17;//renderer.lineThickness;// / scaleSvg.scaleY;
         let y = y0 - delta;
 
         return ABCJS.glyphs.printSymbol(x, y, symbol, renderer.paper, {
@@ -517,6 +517,7 @@ let AbcJsUtils = {
     drawNote(renderer, elem: Elem, pitch:number, cls:string, headSymbol?:string):SVGPathElement[] {
         let res:SVGPathElement[] = [],
             dur = elem.abcelem.duration,
+            pitch0 = elem.abcelem.midiPitches[0].pitch,
             elHeadSymbol = "noteheads." + (dur==1 ? "whole" : (dur==0.5 ? "half" : "quarter")),
             tryHead = AbcJsUtils.tryDrawSymbolEqualPitch(renderer, elem, pitch, headSymbol || elHeadSymbol, cls);
         if(tryHead!=null){
@@ -535,55 +536,70 @@ let AbcJsUtils = {
         ;
 
         let addLedgers = function(basePitch:number, baseY:number){
-            let addBelow = AbcJsUtils.countStepDelta(pitch, basePitch);// /2
+            let addBelow = AbcJsUtils.countStepDelta(pitch, basePitch)/2; // 2 шага между линейками
             while(addBelow!=0){
                 res.push(AbcJsUtils.printLine(renderer,
-                    headX-3, headX + headW+5, baseY+headH*addBelow, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
-                addBelow>0 ? addBelow-- : addBelow++;
+                    headX-3, headX + headW+5, baseY+headH*addBelow-addBelow*0.17, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
+                addBelow>0 ? addBelow-- : addBelow++;//
             }
         };
 
         // note head
         res.push(head);
 
+        if(alteredNotes.includes(pitch))
+            res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
+                abcjsHelper.currentIsFlat() ? 'accidentals.flat' : 'accidentals.sharp',
+                cls, -headW));
+        if(alteredNotes.includes(pitch)) // упрощаем до белых клавиш
+            pitch = abcjsHelper.currentIsFlat() ? pitch+1 : pitch-1;
+
         // middle ledgers;
-        if([26,27, 29,30, 33,34, 36,37, 40,
-            //43,44, 47, 50,51, 53,54, 57,58,
-            60,61,
-            // 64, 67,68, 71, 74,75, 77,78,
-            81,82, 84,85, 88, 91,92, 95].includes(pitch)) {// on lines
+        if([26, 29, 33, 36, 40, // bottom lines
+            60,
+            81, 84, 88, 91, 95 // top lines
+            ].includes(pitch)
+            || ([43, 47, 50, 53, 57].includes(pitch) && pitch0>=60) // below C1
+            || ([64, 67, 71, 74, 77].includes(pitch) && pitch0<60)// above C1
+        ) {// on lines
             res.push(AbcJsUtils.printLine(renderer,
                 headX-3, headX + headW+5, headY, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
 
             if (pitch>=84)
                 addLedgers(81, headY);
-            if (pitch<=37)
+            else
+            if (pitch>=64 && pitch0<60)
+                addLedgers(60, headY);
+            if (pitch<=36)
                 addLedgers(40, headY);
+            else
+            if (pitch<=57 && pitch0>=60)
+                addLedgers(60, headY);
         }
         // ledger below, upper notes
-        if([62,63, 83, 86,87, 89,90, 93,94, 96].includes(pitch)){
+        if([83, 86, 89, 93, 96].includes(pitch)
+            || ([62, 65, 69, 72, 76, 79].includes(pitch) && pitch0<60) // above C1
+        ){
             res.push(AbcJsUtils.printLine(renderer,
                 headX-3, headX + headW+5, headY+headH/2, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
             if (pitch>=86)
                 addLedgers(83, headY+headH/2);
+            else
+            if (pitch>=65 && pitch0<60)
+                addLedgers(62, headY+headH/2);// between lines
         }
         // ledger above, low notes
-        if([24,25, 28, 31,32, 35, 38,39, 59].includes(pitch)){
+        if([24, 28, 31, 35, 38].includes(pitch)
+            || ([41, 45, 48, 52, 55, 59].includes(pitch) && pitch0>=60) // below C1
+        ){
             res.push(AbcJsUtils.printLine(renderer,
                 headX-3, headX + headW+5, headY-headH/2, 0.35 + renderer.lineThickness, "abcjs-ledger " + cls, "ledger"));
             if (pitch<=35)
                 addLedgers(38, headY-headH/2);
+            else
+            if (pitch<=55 && pitch0>=60)
+                addLedgers(59, headY-headH/2);// between lines
         }
-
-        if(alteredNotes.includes(pitch))
-            res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
-                abcjsHelper.currentIsFlat() ? 'accidentals.flat' : 'accidentals.sharp',
-                cls, -headW));
-
-        // all sharps
-        // if([25,27, 30,32,34, 37,39, 42,44,46, 49,51, 54,56,58, 61,63, 66,68,70, 73,75, 78,80,82, 85,87, 90,92,94].includes(pitch))
-        //     res.push(AbcJsUtils.drawSymbolAt(renderer, elem, pitch,
-        //         'accidentals.sharp', cls, -headW));
 
         return res;
     }

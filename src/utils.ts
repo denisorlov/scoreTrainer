@@ -11,7 +11,7 @@ const utils = {
         document.querySelector(selector)!.addEventListener(type, foo);
     },
 
-    /** await sleep(2000); // Ждём 2 секунды */
+    /** await utils.sleep(2000); // Ждём 2 секунды */
     sleep: function (ms:number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     },

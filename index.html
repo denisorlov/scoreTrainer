@@ -93,57 +93,38 @@
 <div id="fixedDivTop" style="position: fixed;top: 0;background-color: #e9e9e9;right: 0;left: 0;padding-left: 5px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
     <span id="toolPanel" style="_display: flex;">
         <!--button id="playButton" title="play/pause">&#9199;</button-->
-    <button id="settingButton" onclick="utils.toggle('#settingPanel');utils.toggle('#settingPanel2');">&#9881;</button>
-    <select id="selectLang" style="width: 2em;font-size: 1em;"></select>
-    <select id="selectAbc" style="width: 200px;font-size: 1em;">
-        <option value="" style="color: gray">&#127900;&#127901;...</option>
-    </select><select id="selectGroupAbc" style="width: 2em;font-size: 1em;">
-        <option value="" style="color: gray">&#127898;</option>
-    </select>
-    <button id="slowerButton" title="Медленнее">&#9196;</button>
-    <span id="tempoWarp" style="padding-top: 0.2em;cursor: pointer;" title="Toggle half/whole"></span>
-    <button id="fasterButton" title="Быстрее">&#9195;</button><!---->
-    <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
-    <input type="checkbox" id="bindKeysScroll" title="Scroll: привязать клавиши стрелок <Влево Вправо>">
-    <select id="selectPaintKeys" style="width: 3em;font-size: 1em;" title="Paint notes">
-        <option value="no" style="color: gray">no</option>
-        <option value="key" style="color: gray">key</option>
-        <option value="C" style="color: gray">C</option>
-        <option value="C#" style="color: gray">C#/D♭</option>
-        <option value="D" style="color: gray">D</option>
-        <option value="D#" style="color: gray">D#/E♭</option>
-        <option value="E" style="color: gray">E</option>
-        <option value="F" style="color: gray">F</option>
-        <option value="F#" style="color: gray">F#/G♭</option>
-        <option value="G" style="color: gray">G</option>
-        <option value="G#" style="color: gray">G#/A♭</option>
-        <option value="A" style="color: gray">A</option>
-        <option value="A#" style="color: gray">A#/B♭</option>
-        <option value="B" style="color: gray">B</option>
-    </select>
-    <button id="buildEditorButton" title="Редактировать">&#128221;</button>
-    <button id="noteOnViewButton" title="Ноты миди" onclick="utils.toggle('#noteOnView');noteOnView.style.top='150px';noteOnView.style.left='0'">&#127896;</button><!-- https://symbolonly.com/office-symbol.html -->
+    <!--button id="noteOnViewButton" title="Ноты миди" onclick="utils.toggle('#noteOnView');noteOnView.style.top='150px';noteOnView.style.left='0'">&#127896;</button--><!-- https://symbolonly.com/office-symbol.html -->
+        <button id="settingButton" onclick="utils.toggle('#settingPanel');utils.toggle('#settingPanel2');">&#9881;</button>
+        <select id="selectLang" style="width: 2em;font-size: 1em;" title="Язык/Language"></select>
+        <select id="selectAbc" style="width: 200px;font-size: 1em;">
+            <option value="" style="color: lightgray">&#127900;select music...</option><!-- &#127901; -->
+        </select><select id="selectGroupAbc" style="width: 2em;font-size: 1em;" title="Level">
+            <option value="" style="color: gray">&#127898;</option>
+        </select>
+        <select id="selectPaintKeys" style="width: 3em;font-size: 1em;" title="Paint notes">
+            <option value="no" style="color: gray">no</option>
+            <option value="key" style="color: gray">key</option>
+            <option value="C" style="color: gray">C</option>
+            <option value="C#" style="color: gray">C#/D♭</option>
+            <option value="D" style="color: gray">D</option>
+            <option value="D#" style="color: gray">D#/E♭</option>
+            <option value="E" style="color: gray">E</option>
+            <option value="F" style="color: gray">F</option>
+            <option value="F#" style="color: gray">F#/G♭</option>
+            <option value="G" style="color: gray">G</option>
+            <option value="G#" style="color: gray">G#/A♭</option>
+            <option value="A" style="color: gray">A</option>
+            <option value="A#" style="color: gray">A#/B♭</option>
+            <option value="B" style="color: gray">B</option>
+        </select>
+        <button id="buildEditorButton" title="Редактировать">&#128221;</button>
+        <span id="playerTempoButtonSpan" style="display: none;font-size: inherit;">
+            <button id="slowerButton" title="Плеер: Медленнее">&#9196;</button>
+            <span id="tempoWarp" style="padding-top: 0.2em;cursor: pointer;" title="Плеер: Toggle half/whole"></span>
+            <button id="fasterButton" title="Плеер: Быстрее">&#9195;</button>
+        </span>
     </span>
-    <div id="settingPanel" style="display: none; background-color: #9f9f9f;">
-        W: <input type="number" min="400" step="100" id="staffWidth" value="900" title="Width: Ширина в px" style="width: 2.5em">
-        L: <input type="number" min="0" step="10" id="paddingLeft" value="50" title="Left: Слева в px" style="width: 2.5em">
-        R: <input type="number" min="0" step="10" id="paddingRight" value="20" title="Right: Справа в px" style="width: 2.5em">
-        RM: <input type="checkbox" id="staffWidthResize" title="Resize Mode: Ширина на всю страницу" checked="checked">
-        S: <input type="number" id="staffScale" value="1" title="Scale: Масштаб, игнорируется если ширина на всю страницу" style="width: 2em">
-        ML: <input type="number" id="preferredMeasuresPerLine" value="6" title="Measures per Line: Предпочтительное кол-во тактов в строке" style="width: 1.5em">
-        &nbsp;
-        UM: <input type="checkbox" id="metronomeUse" title="Use Metronome: Использовать метроном">
-        OM: <input type="checkbox" id="metronomeOnlyUse" title="Only Metronome: Использовать только метроном">
-        <!--input title="Использовать затакт" type="checkbox" id="extraMeasure"-->
-        MT: <input type="text" id="metronomeText" title="Metronome Text: Строка метронома в формате %%MIDI drum" style="width: 8em;">
-        <span id="changeInfo" style="display: none; cursor: help">&#9998;</span><!-- @TODO for remove -->
-    </div>
-    <div id="settingPanel2" style="display: none;">
-        ST: <input type="number" min="0" step="30" id="scrollTopThreshold" value="120" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
-        SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="300" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">
-        <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');utils.toggle('#scrollBotThresholdLine');">:::</button>
-    </div>
-    <div id="audio" style="display: none_;"></div>
+    <div id="audio" style="display: inline-block;width: 400px"></div>
     <div class="font_size_initial">
         <div style="display: none">
             <div id="swMesure" style="background-color: green; border: 1px solid green;box-sizing: border-box;position: relative;display: inline-block;width: 25%;" title="">
@@ -152,6 +133,7 @@
             <input type="number" step="5" min="0" id="maxWrongNotes" value="0" title="Максимум неверных нот" style="width: 2.5em">
             <input type="number" step="5" min="0" id="prizeNotes" value="0" title="Призовые ноты, для сброса неверных нот" style="width: 2.5em">
         </div><!-- display: none -->
+
 
         rst: <input type="number" min="1" step="1" id="restartErrors" value="3" title="Количество ошибок для рестарта такта" style="width: 2em">
         rpt: <input type="number" min="0" step="1" id="repeatErrors" value="1" title="Количество ошибок для повтора такта" style="width: 2em">
@@ -167,6 +149,27 @@
         </fieldset>
         &#127929;:<span id="voicesCheckControlPanel" title="Выбрать часть голосов для контроля">...</span>&#127900;
         <!--button id="resetErrButton" title="" style="font-size: initial">&#9881;</button-->
+    </div>
+    <div id="settingPanel" style="display: none; background-color: #9f9f9f;">
+        W: <input type="number" min="400" step="100" id="staffWidth" value="900" title="Width: Ширина в px" style="width: 2.5em">
+        L: <input type="number" min="0" step="10" id="paddingLeft" value="50" title="Left: Слева в px" style="width: 2.5em">
+        R: <input type="number" min="0" step="10" id="paddingRight" value="20" title="Right: Справа в px" style="width: 2.5em">
+        RM: <input type="checkbox" id="staffWidthResize" title="Resize Mode: Ширина на всю страницу" checked="checked">
+        S: <input type="number" id="staffScale" value="0" title="Scale: Масштаб, игнорируется если ширина на всю страницу" style="width: 2em">
+        ML: <input type="number" id="preferredMeasuresPerLine" value="4" title="Measures per Line: Предпочтительное кол-во тактов в строке" style="width: 1.5em">
+        &nbsp;
+        UM: <input type="checkbox" id="metronomeUse" title="Use Metronome: Использовать метроном">
+        OM: <input type="checkbox" id="metronomeOnlyUse" title="Only Metronome: Использовать только метроном">
+        <!--input title="Использовать затакт" type="checkbox" id="extraMeasure"-->
+        MT: <input type="text" id="metronomeText" title="Metronome Text: Строка метронома в формате %%MIDI drum" style="width: 8em;">
+        <span id="changeInfo" style="display: none; cursor: help">&#9998;</span><!-- @TODO for remove -->
+    </div>
+    <div id="settingPanel2" style="display: none;">
+        ST: <input type="number" min="0" step="30" id="scrollTopThreshold" value="120" title="Scroll Top: Верхняя граница скролла" style="width: 3em">
+        SB: <input type="number" min="0" step="50" id="scrollBotThreshold" value="300" title="Scroll Bottom: Нижняя граница скролла" style="width: 3em">
+        <button id="scrollThresholdLineButton" style="color: red" title="Показать уровни скролла" onclick="utils.toggle('#scrollTopThresholdLine');utils.toggle('#scrollBotThresholdLine');">:::</button>
+        <input type="checkbox" id="autoScroll" title="Auto Scroll: Автоматическая прокрутка" checked="checked">
+        <input type="checkbox" id="bindKeysScroll" title="Scroll: привязать клавиши стрелок <Влево Вправо>">
     </div>
 </div><!-- fixedDivTop -->
 <button id="fixedDivTopHideButton" style="position: fixed;top: 0;right: 0;" title="Спрятать/показать панель" onclick="utils.toggle('#fixedDivTop');">_</button>

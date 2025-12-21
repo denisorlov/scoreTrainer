@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', (event): void => {
     setWrongNotesIndicator();
     // language titles
     langUtils.initSelect(utils.elemType('selectLang', HTMLSelectElement))
+
+    //drawNoteTest(); // utilsTest.ts: check custom notes drowning
 }); // DOMContentLoaded
 
 function setButtons(){

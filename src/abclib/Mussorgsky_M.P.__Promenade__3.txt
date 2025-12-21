@@ -8,7 +8,7 @@ Q:1/4=80
 M:5/4
 I:linebreak 
 K:Bb
-V:1 treble nm="Фортепиано" snm="Ф-но"
+V:1 treble nm="Ф-но" snm="Ф-но"
 V:2 treble 
 V:3 bass 
 V:1
